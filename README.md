@@ -1,39 +1,41 @@
 # Minnesota QB Exam Simulator
 
-A local, desktop-first study application for the Minnesota Residential Building Contractor — Qualifying Builder exam. The MVP emphasizes reliable sessions, scoring, timing, persistence, and analytics rather than a comprehensive question bank.
+A local, desktop-first Next.js/TypeScript/Tailwind study application for the Minnesota Residential Building Contractor — Qualifying Builder exam. Sessions, exact-set scoring, timing, analytics, and versioned `localStorage` require no backend, account, database, or external API.
 
-## Stack and setup
-
-Next.js App Router, React, TypeScript, Tailwind CSS, and browser `localStorage`; no backend, account, database, or external API.
+## Setup
 
 ```bash
 npm install
 npm run dev
 npm run lint
+npm test
 npm run build
 ```
 
-## Question data
+## Question-bank architecture
 
-The replaceable sample bank is in `data/questions.ts`; its schema is defined in `lib/types.ts`. A `Question` has a stable ID, primary official domain, training subcategory, difficulty, single/multiple type, English question, Ukrainian question-only translation, stable answer IDs, an exact correct-answer ID set, optional required selection count, explanation, structured reference, general tags, independent exam-language tags, and skills.
+The canonical bank combines 24 `sample` records in `data/questions.ts` with 25 Building Planning / Life Safety candidates in `data/questions-life-safety.ts` (49 total). Phase 4 inventoried all 25 candidate records and attempted the source audit, but official source access was unavailable in the audit environment. Editorial metadata and source hierarchy were corrected; no substantive claim was promoted. The candidates therefore remain deliberately `draft` and `unverified`: exact controlling sections, Minnesota amendments, exceptions, translations, distractors, explanations, and answer keys still require primary-source editorial review. No question is currently `reviewed`, `source-checked`, or Full Exam eligible. See `docs/audits/LIFE_SAFETY_BATCH_01.md`.
 
-To add questions safely, use a unique stable ID, provide four or five unique answer IDs, ensure every `correctAnswers` ID exists, set `requiredSelections` to the correct-answer count for multiple-select items, and retain the taxonomy dimensions. Do not mutate IDs after attempts exist. Confirm technical claims against current authoritative sources. Full Exam enables automatically at 110 eligible unique records.
+Editorial status and verification are independent:
 
-## Local data and disclaimer
+- `sample`: engine/demo learning content, not serious exam inventory.
+- `draft`: an original bank candidate awaiting substantive review.
+- `reviewed`: editorially approved content; it is not automatically verified.
+- `unverified`: no completed primary-source check.
+- `source-checked`: a reviewer confirmed the technical/legal claim and precise source locator.
 
-`lib/storage.ts` owns versioned `mnqb:v1:*` localStorage records for the profile, active session, completed attempts, and latest result. Clearing browser site data removes all progress. Corrupt or missing JSON falls back to safe empty states.
+Structural validation is **not** technical or legal verification. Full Exam eligibility is derived—not manually asserted—and requires `reviewed`, `source-checked`, exactly five choices, a structurally valid record, English and Ukrainian questions, an explanation, a reference, and valid correct-answer IDs. Full Exam becomes available only with 110 eligible **unique** questions. Four-choice sample content remains available for learning modes but cannot enter Full Exam.
 
-The included 24 questions are original sample practice content for engine validation. They are **not** actual, leaked, reconstructed, or confidential Minnesota DLI exam questions and are not a substitute for current authoritative code, statute, rule, or DLI guidance.
+`data/question-bank-plan.ts` is the canonical coverage/source-family matrix. Its **550-question target and every category/subcategory allocation are internal editorial planning values, not official DLI percentages or quotas**. The matrix separately represents contractor law/business/regulatory study. The DLI public description of approximately 60% Residential Building Code and 40% statutes/rules/regulatory material is not converted into an asserted exam count. The linked guide's “60 Scored Questions” content-outline label alongside its 110-question exam statement remains unresolved; we do not infer 50 unscored items, a 60/50 split, that only listed technical items score, or official subcategory counts.
 
-## Validation and Architecture Guarantees
+The required authoring and promotion process is in `docs/QUESTION_WRITING_GUIDE.md`. New serious questions use five plausible English answer options, stable answer IDs, question-only Ukrainian translation, explanations, and structured references (`source`, `section`, optional `subsection`, `title`, and `note`). The source-family registry includes the DLI exam guide/reference manual, 2020 Minnesota Residential and Energy Codes, applicable Minnesota Rules, Plumbing Rules 4714, and identified Minnesota Statutes chapters. For residential-code verification, “2020 Minnesota Residential Code” means the 2018 IRC provision incorporated by Minnesota, compared with Minnesota Rules Chapter 1309 amendments and Chapter 1300 or another cross-referenced State Building Code chapter where applicable. A generic or later-edition IRC provision is not sufficient.
 
-- `lib/question-validation.ts` validates IDs, taxonomy, translations, answer structures, correct-answer references, selection counts, tags, and skills. The canonical bank is covered by tests.
-- Multiple-select scoring compares exact unique answer-ID sets: order does not matter, while missing, extra, wrong, or duplicate selections receive no credit.
-- Overall exam time is computed from `startedAt` and the current/completion timestamp. It survives renders and refreshes and never displays below zero.
-- Per-question time records only active open intervals. Navigation and submission accrue the current interval; restore starts a new interval so closed-browser time is included in overall duration but is not assigned to one question.
-- Active sessions preserve their stable ID, bank version, question order, position, selections, flags, checked practice answers, and accumulated question times. Completion is idempotent by attempt/session ID.
-- Versioned `mnqb:v1:*` storage readers reject malformed records safely. Attempts store stable question IDs rather than question copies and tolerate questions later being removed.
-- Question bank version is currently **1**. Full Exam requires 110 eligible unique questions and remains unavailable with the current 24-question sample bank.
-- `/diagnostics` is a developer QA view with bank composition, validation findings, missing metadata counts, and Full Exam readiness. It never displays correct answers.
+## Validation and guarantees
 
-Current limitations: local browser storage has no cross-device sync; reference metadata and all future questions require editorial validation; the 60/40 weighting configuration is explicitly planning-only until reviewed quotas exist.
+- `lib/question-validation.ts` validates IDs, taxonomy, editorial metadata, translations, answer structures, correct-answer references, selection counts, explanations, references, tags, and skills; it also owns Full Exam eligibility.
+- Multiple-select scoring compares exact unique answer-ID sets; no partial credit is given.
+- `lib/engine.ts` filters Full Exam generation through derived eligibility while preserving all structurally valid sample/draft content for quick and category practice.
+- Session timing, versioned `mnqb:v1:*` persistence, safe malformed-data fallback, stable question IDs, and idempotent completion remain intact.
+- `/diagnostics` reports the coverage plan, planned/current primary and subcategory counts, editorial/verification totals, quality findings, and eligibility readiness without exposing correct answers or cluttering the learner dashboard.
+
+The questions are original practice content, not actual, leaked, reconstructed, confidential, copied, or near-copied DLI exam questions. Always consult current authoritative sources.
