@@ -14,7 +14,7 @@ npm run build
 
 ## Question-bank architecture
 
-The canonical bank combines 24 `sample` records in `data/questions.ts` with 25 Building Planning / Life Safety candidates in `data/questions-life-safety.ts` (49 total). Phase 4 inventoried all 25 candidate records and attempted the source audit, but official source access was unavailable in the audit environment. Editorial metadata and source hierarchy were corrected; no substantive claim was promoted. The candidates therefore remain deliberately `draft` and `unverified`: exact controlling sections, Minnesota amendments, exceptions, translations, distractors, explanations, and answer keys still require primary-source editorial review. No question is currently `reviewed`, `source-checked`, or Full Exam eligible. See `docs/audits/LIFE_SAFETY_BATCH_01.md`.
+The canonical bank combines 24 `sample` records in `data/questions.ts` with 25 Building Planning / Life Safety records in `data/questions-life-safety.ts` (49 total). All 25 Life Safety records were rewritten from the supplied source-checked specification, reviewed, and source-checked; all 25 are Full Exam eligible. The 24 legacy samples remain unverified and ineligible. Full Exam remains unavailable until the bank reaches 110 eligible unique questions. See `docs/audits/LIFE_SAFETY_BATCH_01.md` for per-question traceability.
 
 Editorial status and verification are independent:
 
