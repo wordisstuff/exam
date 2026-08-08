@@ -1,4 +1,4 @@
-import type{Question,PrimaryCategory}from"@/lib/types";
+import type{Question,PrimaryCategory}from"../lib/types.ts";
 type Seed=[PrimaryCategory,string,string,string,string[],number[],string,string[],string[]];
 const seeds:Seed[]=[
 ["Plans and Specifications","Plans","Before pricing work, what is the best way to resolve a conflict between a plan and written specification?","Який найкращий спосіб вирішити суперечність між планом і письмовою специфікацією перед розрахунком вартості?",["Guess from typical practice","Request documented clarification","Use the cheaper requirement","Ignore the specification"],[1],"Documented clarification avoids assumptions and creates a reliable basis for the work.",["best"],["document interpretation"]],
