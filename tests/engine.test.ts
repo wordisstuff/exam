@@ -1,0 +1,3 @@
+import test from"node:test";import assert from"node:assert/strict";import{exactMatch,shuffledUnique}from"../lib/engine.ts";
+test("multiple select requires an exact set",()=>{assert.equal(exactMatch(["a","c"],["a","c"]),true);assert.equal(exactMatch(["a"],["a","c"]),false);assert.equal(exactMatch(["a","c","e"],["a","c"]),false)});
+test("selection is unique, bounded, deterministic, and non-mutating",()=>{const items=[{id:"1"},{id:"2"},{id:"3"}],before=JSON.stringify(items);assert.deepEqual(shuffledUnique(items,2,()=>0).map(x=>x.id),["2","3"]);assert.equal(new Set(shuffledUnique(items,9,()=>.5).map(x=>x.id)).size,3);assert.equal(JSON.stringify(items),before)});
