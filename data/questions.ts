@@ -31,4 +31,5 @@ export const sampleQuestions:Question[]=seeds.map((s,i)=>({id:`sample-${String(i
 
 import{lifeSafetyQuestions}from"./questions-life-safety.ts";
 import{energyQuestions}from"./questions-energy.ts";
-export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions];
+import{foundationQuestions}from"./questions-foundations.ts";
+export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions];
