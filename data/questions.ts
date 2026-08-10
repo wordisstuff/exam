@@ -30,4 +30,5 @@ const ids=["a","b","c","d","e"];
 export const sampleQuestions:Question[]=seeds.map((s,i)=>({id:`sample-${String(i+1).padStart(3,"0")}`,primaryCategory:s[0],subcategory:s[1],difficulty:i%3===0?"easy":i%3===1?"medium":"exam",type:s[5].length>1?"multiple":"single",question:s[2],questionUk:s[3],answers:s[4].map((text,j)=>({id:ids[j],text})),correctAnswers:s[5].map(j=>ids[j]),requiredSelections:s[5].length>1?s[5].length:undefined,explanation:s[6],reference:{source:"Minnesota QB sample study content",note:"Verify technical requirements against current authoritative documents."},tags:["original-sample"],languageTags:s[7],skills:s[8],editorialStatus:"sample",verificationStatus:"unverified"}));
 
 import{lifeSafetyQuestions}from"./questions-life-safety.ts";
-export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions];
+import{energyQuestions}from"./questions-energy.ts";
+export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions];
