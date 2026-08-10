@@ -5,7 +5,7 @@ export interface CoveragePlanItem{id:string;primaryCategory:PrimaryCategory;subc
 /** Internal editorial targets for broad study-bank coverage. They are not DLI weights, quotas, or percentages. */
 const groups:[PrimaryCategory,SourceFamily,number,"high"|"medium"|"baseline",string[]][]=[
 ["Plans and Specifications","DLI Reference Manual for Residential Building Contractor and Remodeler License Exam",15,"medium",["Plans and Specifications"]],
-["Energy Code","2020 Minnesota Residential Energy Code",45,"high",["Interior Air Barrier","Wind Wash Barrier","Vapor Retarder","Insulation","Fenestration / Doors and Windows Openings","Mechanical / Passive Ventilation"]],
+["Energy Code","2020 Minnesota Residential Energy Code",45,"high",["Envelope Criteria","Insulation","Fenestration","Foundation Insulation","Basement Walls","Air Barrier / Vapor Retarder","Slabs","Crawl Spaces","Mechanical Ventilation","Ventilation Calculations"]],
 ["Building Planning / Life Safety","2020 Minnesota Residential Code",60,"high",["Means of Egress","Stairways","Smoke Alarms","Required Exit Door","Wall Between House and Garage","Safety Glazing","Natural Light and Ventilation","Minimum Ceiling Heights","Replacement Windows"]],
 ["Sitework","2020 Minnesota Residential Code",25,"medium",["Soils","Surveys","Excavation / Gopher One Call","Filling / Soil Correction","Erosion Control","Backfill","Frost Protection"]],
 ["Footings and Foundations","2020 Minnesota Residential Code",50,"high",["Strength of Concrete","Admixtures","Concrete Specification","Air Entrainment","Curing","Foundation Wall Design","Vertical Reinforcement and Anchors","Minimum Size Footings","Damp Proofing and Waterproofing","Slab-On-Grade"]],
