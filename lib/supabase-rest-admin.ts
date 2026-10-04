@@ -249,3 +249,41 @@ export async function completeStudySession(sessionId: string, completedAt: strin
   const payload = await parseJson(response);
   if (!response.ok) throw new Error(messageFromPayload(payload, "Unable to complete study session"));
 }
+
+
+export async function listUserStudySessions(userId: string): Promise<PersistedStudySession[]> {
+  const response = await fetch(
+    restUrl("study_sessions", {
+      user_id: `eq.${userId}`,
+      select: "*",
+      order: "started_at.desc",
+    }),
+    {
+      headers: adminHeaders(),
+      cache: "no-store",
+    },
+  );
+
+  const payload = await parseJson(response);
+  if (!response.ok) throw new Error(messageFromPayload(payload, "Unable to load user study sessions"));
+  return Array.isArray(payload) ? payload as PersistedStudySession[] : [];
+}
+
+export async function listAnswersForSessionIds(sessionIds: readonly string[]): Promise<PersistedSessionAnswer[]> {
+  if (!sessionIds.length) return [];
+  const filter = `in.(${sessionIds.join(",")})`;
+  const response = await fetch(
+    restUrl("session_answers", {
+      session_id: filter,
+      select: "*",
+    }),
+    {
+      headers: adminHeaders(),
+      cache: "no-store",
+    },
+  );
+
+  const payload = await parseJson(response);
+  if (!response.ok) throw new Error(messageFromPayload(payload, "Unable to load study answers"));
+  return Array.isArray(payload) ? payload as PersistedSessionAnswer[] : [];
+}
