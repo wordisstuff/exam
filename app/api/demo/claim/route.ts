@@ -1,9 +1,11 @@
+import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { currentUser } from "@/lib/server-auth";
 import { DEMO_QUESTION_IDS, checkDemoAnswer } from "@/lib/demo-bank";
 import { QUESTION_BANK_VERSION } from "@/lib/config";
 import {
   completeStudySession,
+  getClaimedDemoSession,
   insertStudySession,
   upsertSessionAnswers,
 } from "@/lib/supabase-rest-admin";
@@ -63,7 +65,7 @@ export async function POST(request: Request) {
   const byId = new Map(answers.map(answer => [answer.questionId, answer]));
   const ordered = DEMO_QUESTION_IDS.map(questionId => byId.get(questionId)).filter(Boolean) as DemoClaimAnswer[];
 
-  if (ordered.length !== DEMO_QUESTION_IDS.length) {
+  if (answers.length !== DEMO_QUESTION_IDS.length || byId.size !== DEMO_QUESTION_IDS.length || ordered.length !== DEMO_QUESTION_IDS.length) {
     return NextResponse.json({ error: "Complete all 10 demo questions before saving progress." }, { status: 400 });
   }
 
@@ -72,9 +74,43 @@ export async function POST(request: Request) {
       ? new Date(body.startedAt).toISOString()
       : new Date().toISOString();
 
-  const sessionId = crypto.randomUUID();
+  const claimPayload = JSON.stringify({
+    userId: user.id,
+    bankVersion: QUESTION_BANK_VERSION,
+    startedAt,
+    answers: ordered.map(answer => ({
+      questionId: answer.questionId,
+      selectedAnswerIds: [...answer.selectedAnswerIds].sort(),
+      bookSearchSeconds: answer.bookSearchSeconds ?? null,
+    })),
+  });
+  const demoClaimKey = createHash("sha256").update(claimPayload).digest("hex");
+
+  const gradedRows = ordered.map(answer => {
+    const feedback = checkDemoAnswer(answer.questionId, answer.selectedAnswerIds);
+    const usedBook = (answer.bookSearchSeconds ?? 0) > 0;
+    return {
+      questionId: answer.questionId,
+      selectedAnswerIds: answer.selectedAnswerIds,
+      isCorrect: feedback.correct,
+      responsePath: usedBook ? "book-assisted" as const : "direct" as const,
+      bookSearchSeconds: usedBook ? answer.bookSearchSeconds : null,
+    };
+  });
 
   try {
+    const existing = await getClaimedDemoSession(user.id, demoClaimKey);
+    if (existing) {
+      return NextResponse.json({
+        saved: true,
+        duplicate: true,
+        sessionId: existing.id,
+        score: gradedRows.filter(row => row.isCorrect).length,
+        total: gradedRows.length,
+      });
+    }
+
+    const sessionId = crypto.randomUUID();
     await insertStudySession({
       id: sessionId,
       userId: user.id,
@@ -84,35 +120,40 @@ export async function POST(request: Request) {
       startedAt,
       timeLimitSeconds: null,
       questionIds: [...DEMO_QUESTION_IDS],
+      demoClaimKey,
     });
 
     const checkedAt = new Date().toISOString();
-    const rows = ordered.map(answer => {
-      const feedback = checkDemoAnswer(answer.questionId, answer.selectedAnswerIds);
-      const usedBook = (answer.bookSearchSeconds ?? 0) > 0;
-      return {
-        sessionId,
-        questionId: answer.questionId,
-        selectedAnswerIds: answer.selectedAnswerIds,
-        checkedAt,
-        isCorrect: feedback.correct,
-        questionTimeSeconds: 0,
-        flagged: false,
-        responsePath: usedBook ? "book-assisted" as const : "direct" as const,
-        bookSearchSeconds: usedBook ? answer.bookSearchSeconds : null,
-      };
-    });
+    const rows = gradedRows.map(answer => ({
+      sessionId,
+      ...answer,
+      checkedAt,
+      questionTimeSeconds: 0,
+      flagged: false,
+    }));
 
     await upsertSessionAnswers(rows);
     await completeStudySession(sessionId, user.id, checkedAt);
 
     return NextResponse.json({
       saved: true,
+      duplicate: false,
       sessionId,
       score: rows.filter(row => row.isCorrect).length,
       total: rows.length,
     });
   } catch (error) {
+    const existing = await getClaimedDemoSession(user.id, demoClaimKey).catch(() => null);
+    if (existing) {
+      return NextResponse.json({
+        saved: true,
+        duplicate: true,
+        sessionId: existing.id,
+        score: gradedRows.filter(row => row.isCorrect).length,
+        total: gradedRows.length,
+      });
+    }
+
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unable to save demo progress." },
       { status: 500 },
