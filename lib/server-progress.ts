@@ -143,6 +143,10 @@ export function buildProgressSummary(
     .sort((a, b) => a.percentage - b.percentage || b.total - a.total)
     .slice(0, 8);
 
+  const bookPracticeSessionIds = new Set(
+    sessions.filter(session => session.mode === "book-practice").map(session => session.id),
+  );
+
   let directAnswers = 0;
   let directCorrect = 0;
   let bookAssistedAnswers = 0;
@@ -152,6 +156,7 @@ export function buildProgressSummary(
   const bookTopics = new Map<string, { searches: number; seconds: number; correct: number }>();
 
   for (const row of answers) {
+    if (!bookPracticeSessionIds.has(row.session_id)) continue;
     if (!row.selected_answer_ids.length) continue;
 
     if (row.response_path === "direct") {
