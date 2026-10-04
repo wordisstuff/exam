@@ -43,6 +43,12 @@ export async function GET(
         checkedAt: answer.checked_at,
         questionTimeSeconds: answer.question_time_seconds,
         flagged: answer.flagged,
+        responsePath: answer.response_path ?? null,
+        bookSearchStartedAt: answer.book_search_started_at ?? null,
+        bookSearchCompletedAt: answer.book_search_completed_at ?? null,
+        bookSearchSeconds: answer.book_search_seconds ?? null,
+        reportedSection: answer.reported_section ?? null,
+        indexTerm: answer.index_term ?? null,
       },
     ]),
   );
