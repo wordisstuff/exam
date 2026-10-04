@@ -197,12 +197,10 @@ export default function StudySessionPage() {
     }
     setError("");
 
-    if (session.feedbackMode === "deferred") {
-      try {
-        await saveAnswer(question.id, next, false);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Unable to save answer.");
-      }
+    try {
+      await saveAnswer(question.id, next, false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to save answer.");
     }
   }
 
