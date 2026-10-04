@@ -64,7 +64,7 @@ export async function POST(
     })),
   );
 
-  await completeStudySession(sessionId, checkedAt);
+  await completeStudySession(sessionId, user.id, checkedAt);
 
   return NextResponse.json({
     result: {
