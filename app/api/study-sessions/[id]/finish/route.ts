@@ -55,6 +55,12 @@ export async function POST(
       isCorrect: result.correctness[questionId],
       questionTimeSeconds: byQuestion.get(questionId)?.question_time_seconds ?? 0,
       flagged: byQuestion.get(questionId)?.flagged ?? false,
+      responsePath: byQuestion.get(questionId)?.response_path ?? null,
+      bookSearchStartedAt: byQuestion.get(questionId)?.book_search_started_at ?? null,
+      bookSearchCompletedAt: byQuestion.get(questionId)?.book_search_completed_at ?? null,
+      bookSearchSeconds: byQuestion.get(questionId)?.book_search_seconds ?? null,
+      reportedSection: byQuestion.get(questionId)?.reported_section ?? null,
+      indexTerm: byQuestion.get(questionId)?.index_term ?? null,
     })),
   );
 
