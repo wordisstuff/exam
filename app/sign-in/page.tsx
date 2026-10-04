@@ -43,7 +43,7 @@ export default function SignInPage() {
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "Unable to verify code.");
-      router.replace("/dashboard");
+      router.replace("/platform/dashboard");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to verify code.");
