@@ -51,7 +51,7 @@ export default function SignInPage() {
       if (!response.ok) throw new Error(body.error || "Unable to verify code.");
       const params = new URLSearchParams(window.location.search);
       const requestedNext = params.get("next");
-      const safeNext = requestedNext?.startsWith("/") && !requestedNext.startsWith("//")
+      let safeNext = requestedNext?.startsWith("/") && !requestedNext.startsWith("//")
         ? requestedNext
         : "/platform/dashboard";
 
@@ -65,6 +65,9 @@ export default function SignInPage() {
           });
           if (claimResponse.ok) {
             window.sessionStorage.removeItem("mnqb:demo-claim");
+            if (safeNext === "/platform/dashboard") {
+              safeNext = "/platform/dashboard?demo=saved";
+            }
           }
         }
       }
