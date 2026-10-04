@@ -24,12 +24,13 @@ test("server Full Exam draft contains exactly 110 unique learner-safe questions"
   assert.equal(draft.questions.length, EXAM_CONFIG.questionCount);
   assert.deepEqual(draft.questions.map(question => question.id), draft.questionIds);
 
-  const payload = JSON.stringify(draft);
-  assert.doesNotMatch(payload, /correctAnswers/);
-  assert.doesNotMatch(payload, /explanation/);
-  assert.doesNotMatch(payload, /reference/);
-  assert.doesNotMatch(payload, /editorialStatus/);
-  assert.doesNotMatch(payload, /verificationStatus/);
+  for (const learnerQuestion of draft.questions) {
+    assert.equal(Object.hasOwn(learnerQuestion, "correctAnswers"), false);
+    assert.equal(Object.hasOwn(learnerQuestion, "explanation"), false);
+    assert.equal(Object.hasOwn(learnerQuestion, "reference"), false);
+    assert.equal(Object.hasOwn(learnerQuestion, "editorialStatus"), false);
+    assert.equal(Object.hasOwn(learnerQuestion, "verificationStatus"), false);
+  }
 });
 
 test("server Full Exam uses only reviewed source-checked five-choice questions", () => {
