@@ -54,6 +54,12 @@ interface SessionPayload {
     checkedAt: string | null;
     questionTimeSeconds: number;
     flagged: boolean;
+    responsePath?: "direct" | "book-assisted" | null;
+    bookSearchStartedAt?: string | null;
+    bookSearchCompletedAt?: string | null;
+    bookSearchSeconds?: number | null;
+    reportedSection?: string | null;
+    indexTerm?: string | null;
   }>;
   checkedFeedback: Record<string, Feedback>;
 }
@@ -90,6 +96,9 @@ export default function StudySessionPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<ExamResult | null>(null);
+  const [bookStartedAt, setBookStartedAt] = useState<Record<string, number>>({});
+  const [bookSeconds, setBookSeconds] = useState<Record<string, number>>({});
+  const [responsePath, setResponsePath] = useState<Record<string, "direct" | "book-assisted">>({});
   const enteredAt = useRef(Date.now());
   const autoFinished = useRef(false);
 
@@ -120,6 +129,16 @@ export default function StudySessionPage() {
           ]),
         ));
         setFeedback(loaded.checkedFeedback ?? {});
+        setResponsePath(Object.fromEntries(
+          Object.entries(loaded.answers ?? {})
+            .filter(([, answer]) => answer.responsePath === "direct" || answer.responsePath === "book-assisted")
+            .map(([questionId, answer]) => [questionId, answer.responsePath as "direct" | "book-assisted"]),
+        ));
+        setBookSeconds(Object.fromEntries(
+          Object.entries(loaded.answers ?? {})
+            .filter(([, answer]) => typeof answer.bookSearchSeconds === "number")
+            .map(([questionId, answer]) => [questionId, answer.bookSearchSeconds as number]),
+        ));
         if (body.result) setResult(body.result as ExamResult);
         enteredAt.current = Date.now();
       })
@@ -147,6 +166,8 @@ export default function StudySessionPage() {
         selectedAnswerIds: values,
         questionTimeSeconds: questionSeconds(),
         check,
+        responsePath: responsePath[questionId] ?? "direct",
+        bookSearchSeconds: bookSeconds[questionId],
       }),
     });
     const body = await response.json();
@@ -171,6 +192,9 @@ export default function StudySessionPage() {
             : previous;
 
     setSelected(all => ({ ...all, [question.id]: next }));
+    if (!responsePath[question.id]) {
+      setResponsePath(all => ({ ...all, [question.id]: "direct" }));
+    }
     setError("");
 
     if (session.feedbackMode === "deferred") {
@@ -180,6 +204,25 @@ export default function StudySessionPage() {
         setError(err instanceof Error ? err.message : "Unable to save answer.");
       }
     }
+  }
+
+  function startBookSearch() {
+    if (!question || feedback[question.id] || bookStartedAt[question.id]) return;
+    setResponsePath(all => ({ ...all, [question.id]: "book-assisted" }));
+    setBookStartedAt(all => ({ ...all, [question.id]: Date.now() }));
+  }
+
+  function finishBookSearch() {
+    if (!question) return;
+    const started = bookStartedAt[question.id];
+    if (!started) return;
+    const seconds = Math.max(1, Math.floor((Date.now() - started) / 1000));
+    setBookSeconds(all => ({ ...all, [question.id]: seconds }));
+    setBookStartedAt(all => {
+      const next = { ...all };
+      delete next[question.id];
+      return next;
+    });
   }
 
   async function checkCurrent() {
@@ -294,6 +337,31 @@ export default function StudySessionPage() {
             {uk ? "Hide Ukrainian" : "Show Ukrainian"}
           </button>
           {uk && <p lang="uk" className="mt-3 border-l-4 border-teal-700 pl-4">{question.questionUk}</p>}
+
+          {session.feedbackMode === "immediate" && !checked && (
+            <div className="mt-5 rounded-lg border bg-slate-50 p-4">
+              <p className="font-bold">Code Book Practice</p>
+              {!bookStartedAt[question.id] && responsePath[question.id] !== "book-assisted" && (
+                <button type="button" className="btn secondary mt-3" onClick={startBookSearch}>
+                  Use Code Book
+                </button>
+              )}
+              {bookStartedAt[question.id] && (
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  <span className="font-mono font-bold">
+                    {fmt(Math.floor((now - bookStartedAt[question.id]) / 1000))}
+                  </span>
+                  <button type="button" className="btn primary" onClick={finishBookSearch}>Found It</button>
+                </div>
+              )}
+              {responsePath[question.id] === "book-assisted" && bookSeconds[question.id] !== undefined && (
+                <p className="muted mt-3 text-sm">Book search: {bookSeconds[question.id]} sec</p>
+              )}
+              {responsePath[question.id] !== "book-assisted" && (
+                <p className="muted mt-2 text-sm">Answer normally, or start a timed search in your physical code book.</p>
+              )}
+            </div>
+          )}
 
           {question.type === "multiple" && (
             <p className="mt-5 font-bold">Select {question.requiredSelections} answers.</p>
