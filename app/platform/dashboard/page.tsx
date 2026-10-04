@@ -44,8 +44,12 @@ export default function PlatformDashboard() {
   const [progress, setProgress] = useState<ProgressSummary | null>(null);
   const [busy, setBusy] = useState<"deferred" | "immediate" | "book-practice" | null>(null);
   const [error, setError] = useState("");
+  const [demoSaved, setDemoSaved] = useState(false);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setDemoSaved(params.get("demo") === "saved");
+
     Promise.all([
       fetch("/api/auth/me", { cache: "no-store" }),
       fetch("/api/access", { cache: "no-store" }),
@@ -157,6 +161,13 @@ export default function PlatformDashboard() {
               <button onClick={() => router.push("/pricing")} className="btn primary">View $199 access</button>
             </div>
           )}
+        </section>
+      )}
+
+      {demoSaved && (
+        <section className="mt-5 rounded-lg border border-green-200 bg-green-50 p-4 text-green-900">
+          <strong>Demo progress saved.</strong>
+          <span className="ml-2">Your 10-question demo is now part of this account’s study history.</span>
         </section>
       )}
 
