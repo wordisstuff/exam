@@ -104,7 +104,7 @@ export async function POST(request: Request) {
     });
 
     await upsertSessionAnswers(rows);
-    await completeStudySession(sessionId, checkedAt);
+    await completeStudySession(sessionId, user.id, checkedAt);
 
     return NextResponse.json({
       saved: true,
