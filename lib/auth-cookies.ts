@@ -1,8 +1,22 @@
-import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import type { SupabaseAuthSession } from "./supabase-auth-rest.ts";
 
 export const AUTH_COOKIE = "mnqb_access";
 export const REFRESH_COOKIE = "mnqb_refresh";
+
+interface CookieStore {
+  get(name: string): { value: string } | undefined;
+  set(
+    name: string,
+    value: string,
+    options?: {
+      httpOnly?: boolean;
+      sameSite?: "lax" | "strict" | "none";
+      secure?: boolean;
+      path?: string;
+      maxAge?: number;
+    },
+  ): void;
+}
 
 const baseCookie = {
   httpOnly: true,
@@ -11,7 +25,7 @@ const baseCookie = {
   path: "/",
 };
 
-export function setAuthCookies(store: ReadonlyRequestCookies, session: SupabaseAuthSession) {
+export function setAuthCookies(store: CookieStore, session: SupabaseAuthSession) {
   store.set(AUTH_COOKIE, session.access_token, {
     ...baseCookie,
     maxAge: Math.max(60, session.expires_in || 3600),
@@ -22,7 +36,7 @@ export function setAuthCookies(store: ReadonlyRequestCookies, session: SupabaseA
   });
 }
 
-export function clearAuthCookies(store: ReadonlyRequestCookies) {
+export function clearAuthCookies(store: CookieStore) {
   store.set(AUTH_COOKIE, "", { ...baseCookie, maxAge: 0 });
   store.set(REFRESH_COOKIE, "", { ...baseCookie, maxAge: 0 });
 }
