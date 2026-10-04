@@ -22,6 +22,12 @@ export interface PersistedSessionAnswer {
   is_correct: boolean | null;
   question_time_seconds: number;
   flagged: boolean;
+  response_path?: "direct" | "book-assisted" | null;
+  book_search_started_at?: string | null;
+  book_search_completed_at?: string | null;
+  book_search_seconds?: number | null;
+  reported_section?: string | null;
+  index_term?: string | null;
 }
 
 function restBase() {
@@ -166,6 +172,12 @@ export async function upsertSessionAnswer(input: {
   isCorrect?: boolean | null;
   questionTimeSeconds?: number;
   flagged?: boolean;
+  responsePath?: "direct" | "book-assisted";
+  bookSearchStartedAt?: string | null;
+  bookSearchCompletedAt?: string | null;
+  bookSearchSeconds?: number | null;
+  reportedSection?: string | null;
+  indexTerm?: string | null;
 }): Promise<PersistedSessionAnswer> {
   const row: Record<string, unknown> = {
     session_id: input.sessionId,
@@ -177,6 +189,12 @@ export async function upsertSessionAnswer(input: {
   if (input.isCorrect !== undefined) row.is_correct = input.isCorrect;
   if (input.questionTimeSeconds !== undefined) row.question_time_seconds = input.questionTimeSeconds;
   if (input.flagged !== undefined) row.flagged = input.flagged;
+  if (input.responsePath !== undefined) row.response_path = input.responsePath;
+  if (input.bookSearchStartedAt !== undefined) row.book_search_started_at = input.bookSearchStartedAt;
+  if (input.bookSearchCompletedAt !== undefined) row.book_search_completed_at = input.bookSearchCompletedAt;
+  if (input.bookSearchSeconds !== undefined) row.book_search_seconds = input.bookSearchSeconds;
+  if (input.reportedSection !== undefined) row.reported_section = input.reportedSection;
+  if (input.indexTerm !== undefined) row.index_term = input.indexTerm;
 
   const response = await fetch(restUrl("session_answers", { on_conflict: "session_id,question_id" }), {
     method: "POST",
