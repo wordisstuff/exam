@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { questions } from "@/data/questions";
 import { platformDataMode } from "@/lib/platform-env";
-import { buildServerFullExamSession } from "@/lib/server-session";
+import { buildBookPracticeSession, buildServerFullExamSession } from "@/lib/server-session";
 import { currentUser } from "@/lib/server-auth";
 import { insertStudySession } from "@/lib/supabase-rest-admin";
 import { requirePaidAccess } from "@/lib/access-control";
@@ -34,17 +34,24 @@ export async function POST(request: Request) {
     feedbackMode?: unknown;
   } | null;
 
-  if (body?.mode !== "full-exam") {
-    return NextResponse.json({ error: "Only full-exam server sessions are implemented in this phase." }, { status: 400 });
+  if (body?.mode !== "full-exam" && body?.mode !== "book-practice") {
+    return NextResponse.json({ error: "Invalid study mode." }, { status: 400 });
   }
 
-  const feedbackMode = parseFeedbackMode(body.feedbackMode);
+  const feedbackMode =
+    body.mode === "book-practice"
+      ? "immediate"
+      : parseFeedbackMode(body.feedbackMode);
+
   if (!feedbackMode) {
     return NextResponse.json({ error: "Invalid feedback mode." }, { status: 400 });
   }
 
   try {
-    const draft = buildServerFullExamSession(questions, feedbackMode);
+    const draft =
+      body.mode === "book-practice"
+        ? buildBookPracticeSession(questions)
+        : buildServerFullExamSession(questions, feedbackMode);
 
     await insertStudySession({
       id: draft.id,
