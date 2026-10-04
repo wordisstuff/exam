@@ -76,10 +76,10 @@ export async function insertStudySession(input: {
   id: string;
   userId: string;
   bankVersion: number;
-  mode: "full-exam";
+  mode: "full-exam" | "book-practice";
   feedbackMode: "deferred" | "immediate";
   startedAt: string;
-  timeLimitSeconds: number;
+  timeLimitSeconds: number | null;
   questionIds: string[];
 }): Promise<PersistedStudySession> {
   const response = await fetch(restUrl("study_sessions"), {
