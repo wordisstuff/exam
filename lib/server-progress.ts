@@ -25,6 +25,24 @@ export interface WeakArea {
   averageSeconds: number;
 }
 
+export interface BookPracticeTopic {
+  name: string;
+  searches: number;
+  averageSearchSeconds: number;
+  bookAssistedAccuracy: number;
+}
+
+export interface BookPracticeSummary {
+  directAnswers: number;
+  directCorrect: number;
+  directAccuracy: number;
+  bookAssistedAnswers: number;
+  bookAssistedCorrect: number;
+  bookAssistedAccuracy: number;
+  averageBookSearchSeconds: number;
+  topics: BookPracticeTopic[];
+}
+
 export interface ProgressSummary {
   completed: number;
   active: number;
@@ -33,6 +51,7 @@ export interface ProgressSummary {
   answered: number;
   history: ProgressHistoryItem[];
   weakAreas: WeakArea[];
+  bookPractice: BookPracticeSummary;
   activeSessions: Array<{
     id: string;
     mode: string;
@@ -124,6 +143,63 @@ export function buildProgressSummary(
     .sort((a, b) => a.percentage - b.percentage || b.total - a.total)
     .slice(0, 8);
 
+  let directAnswers = 0;
+  let directCorrect = 0;
+  let bookAssistedAnswers = 0;
+  let bookAssistedCorrect = 0;
+  let totalBookSearchSeconds = 0;
+  let timedBookSearches = 0;
+  const bookTopics = new Map<string, { searches: number; seconds: number; correct: number }>();
+
+  for (const row of answers) {
+    if (!row.selected_answer_ids.length) continue;
+
+    if (row.response_path === "direct") {
+      directAnswers++;
+      if (row.is_correct === true) directCorrect++;
+      continue;
+    }
+
+    if (row.response_path !== "book-assisted") continue;
+
+    bookAssistedAnswers++;
+    if (row.is_correct === true) bookAssistedCorrect++;
+
+    const seconds = Math.max(0, row.book_search_seconds ?? 0);
+    if (seconds > 0) {
+      timedBookSearches++;
+      totalBookSearchSeconds += seconds;
+    }
+
+    const question = questionById.get(row.question_id);
+    if (!question) continue;
+    const topic = bookTopics.get(question.subcategory) ?? { searches: 0, seconds: 0, correct: 0 };
+    topic.searches++;
+    topic.seconds += seconds;
+    topic.correct += row.is_correct === true ? 1 : 0;
+    bookTopics.set(question.subcategory, topic);
+  }
+
+  const bookPractice: BookPracticeSummary = {
+    directAnswers,
+    directCorrect,
+    directAccuracy: directAnswers ? (directCorrect / directAnswers) * 100 : 0,
+    bookAssistedAnswers,
+    bookAssistedCorrect,
+    bookAssistedAccuracy: bookAssistedAnswers ? (bookAssistedCorrect / bookAssistedAnswers) * 100 : 0,
+    averageBookSearchSeconds: timedBookSearches ? totalBookSearchSeconds / timedBookSearches : 0,
+    topics: [...bookTopics.entries()]
+      .filter(([, value]) => value.searches >= 2)
+      .map(([name, value]) => ({
+        name,
+        searches: value.searches,
+        averageSearchSeconds: value.searches ? value.seconds / value.searches : 0,
+        bookAssistedAccuracy: value.searches ? (value.correct / value.searches) * 100 : 0,
+      }))
+      .sort((a, b) => b.averageSearchSeconds - a.averageSearchSeconds || a.bookAssistedAccuracy - b.bookAssistedAccuracy)
+      .slice(0, 8),
+  };
+
   const activeSessions = sessions
     .filter(session => session.status === "active")
     .map(session => ({
@@ -143,6 +219,7 @@ export function buildProgressSummary(
     answered: answers.filter(answer => answer.selected_answer_ids.length > 0).length,
     history,
     weakAreas,
+    bookPractice,
     activeSessions,
   };
 }
