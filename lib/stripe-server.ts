@@ -11,6 +11,7 @@ export interface StripeCheckoutSession {
 export interface StripeEvent {
   id: string;
   type: string;
+  created?: number;
   data: {
     object: StripeCheckoutSession;
   };
@@ -65,6 +66,26 @@ export async function createStripeCheckout(input: {
   }
 
   return { id: payload.id, url: payload.url };
+}
+
+
+export function paidCheckoutSessionFromEvent(event: StripeEvent): StripeCheckoutSession | null {
+  if (event.type === "checkout.session.async_payment_succeeded") {
+    return event.data.object;
+  }
+
+  if (event.type === "checkout.session.completed" && event.data.object.payment_status === "paid") {
+    return event.data.object;
+  }
+
+  return null;
+}
+
+export function entitlementStartFromStripeEvent(event: StripeEvent, now = new Date()): Date {
+  if (typeof event.created === "number" && Number.isFinite(event.created) && event.created > 0) {
+    return new Date(event.created * 1000);
+  }
+  return now;
 }
 
 export function verifyStripeWebhookSignature(
