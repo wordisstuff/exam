@@ -24,6 +24,7 @@ export async function POST(request: Request) {
 
   const user = await currentUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = userId;
 
   const body = await request.json().catch(() => null) as {
     answers?: unknown;
@@ -75,7 +76,7 @@ export async function POST(request: Request) {
       : new Date().toISOString();
 
   const claimPayload = JSON.stringify({
-    userId: user.id,
+    userId: userId,
     bankVersion: QUESTION_BANK_VERSION,
     startedAt,
     answers: ordered.map(answer => ({
@@ -109,12 +110,12 @@ export async function POST(request: Request) {
     }));
 
     await upsertSessionAnswers(rows);
-    await completeStudySession(sessionId, user.id, checkedAt);
+    await completeStudySession(sessionId, userId, checkedAt);
     return rows;
   }
 
   try {
-    let existing = await getClaimedDemoSession(user.id, demoClaimKey);
+    let existing = await getClaimedDemoSession(userId, demoClaimKey);
     let duplicate = Boolean(existing);
 
     if (existing?.status === "completed") {
@@ -133,7 +134,7 @@ export async function POST(request: Request) {
       try {
         await insertStudySession({
           id: sessionId,
-          userId: user.id,
+          userId: userId,
           bankVersion: QUESTION_BANK_VERSION,
           mode: "demo",
           feedbackMode: "immediate",
@@ -143,7 +144,7 @@ export async function POST(request: Request) {
           demoClaimKey,
         });
       } catch (error) {
-        existing = await getClaimedDemoSession(user.id, demoClaimKey);
+        existing = await getClaimedDemoSession(userId, demoClaimKey);
         if (!existing) throw error;
         sessionId = existing.id;
         duplicate = true;
