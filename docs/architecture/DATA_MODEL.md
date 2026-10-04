@@ -117,13 +117,13 @@ Status:
 - question_time_seconds integer default 0
 - flagged boolean default false
 
-Future Code Navigation fields:
-- answer_source text nullable
-- lookup_started_at timestamptz nullable
-- lookup_completed_at timestamptz nullable
-- lookup_seconds integer nullable
-- submitted_section text nullable
-- index_keyword text nullable
+Future Code Book Practice fields:
+- response_path text nullable (`direct` | `book-assisted`)
+- book_search_started_at timestamptz nullable
+- book_search_completed_at timestamptz nullable
+- book_search_seconds integer nullable
+- reported_section text nullable
+- index_term text nullable
 
 PRIMARY KEY(session_id, question_id)
 
