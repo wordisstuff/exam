@@ -49,6 +49,7 @@ export default function DemoPage() {
   const [bookStartedAt, setBookStartedAt] = useState<Record<string, number>>({});
   const [bookSeconds, setBookSeconds] = useState<Record<string, number>>({});
   const [now, setNow] = useState(Date.now());
+  const [demoStartedAt] = useState(() => new Date().toISOString());
 
   useEffect(() => {
     fetch("/api/demo/questions", { cache: "no-store" })
@@ -153,6 +154,24 @@ export default function DemoPage() {
 
   if (!question) return null;
 
+  function persistDemoClaim() {
+    const payload = {
+      startedAt: demoStartedAt,
+      answers: questions.map(item => ({
+        questionId: item.id,
+        selectedAnswerIds: selected[item.id] ?? [],
+        bookSearchSeconds: bookSeconds[item.id] ?? null,
+      })),
+    };
+    window.sessionStorage.setItem("mnqb:demo-claim", JSON.stringify(payload));
+  }
+
+  function continueAfterDemo(next = "/platform/dashboard") {
+    persistDemoClaim();
+    const params = new URLSearchParams({ from: "demo", next });
+    router.push(`/sign-in?${params.toString()}`);
+  }
+
   if (done) {
     const bookEntries = Object.entries(bookSeconds);
     const averageBook = bookEntries.length
@@ -178,11 +197,11 @@ export default function DemoPage() {
           )}
 
           <div className="mt-7 grid gap-3 sm:grid-cols-2">
-            <button className="btn primary" onClick={() => router.push("/sign-in")}>
-              Create account / Sign in
+            <button className="btn primary" onClick={() => continueAfterDemo("/platform/dashboard")}>
+              Keep my progress
             </button>
-            <button className="btn secondary" onClick={() => router.push("/pricing")}>
-              View full access
+            <button className="btn secondary" onClick={() => continueAfterDemo("/pricing")}>
+              Continue to full access
             </button>
           </div>
 
