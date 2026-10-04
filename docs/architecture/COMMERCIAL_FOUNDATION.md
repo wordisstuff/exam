@@ -24,7 +24,7 @@ The production product should support:
 - server-controlled question delivery
 - server-controlled answer checking and final scoring
 - persisted attempts and progress
-- room for Code Navigation Mode, Spanish, and AI Tutor in later phases
+- room for Code Book Practice, Spanish, and AI Tutor in later phases
 
 ## Recommended stack
 
@@ -161,7 +161,7 @@ Preserve feedback modes:
 - immediate
 
 Future:
-- code-navigation
+- book-practice
 
 A server session record should include:
 - userId
@@ -176,16 +176,15 @@ A server session record should include:
 
 User answers should be stored separately from question truth data.
 
-## Code Navigation Mode — reserved architecture
+## Code Book Practice — reserved architecture
 
 Phase 1 should leave room for these later fields per question attempt:
-- answerSource: "knew" | "looked-up"
-- lookupStartedAt
-- lookupCompletedAt
-- lookupSeconds
-- submittedSection
-- indexKeywordUsed
-- foundCorrectSection
+- responsePath: "direct" | "book-assisted"
+- bookSearchStartedAt
+- bookSearchCompletedAt
+- bookSearchSeconds
+- reportedSection
+- indexTerm
 
 This is the product feature most likely to distinguish the platform from a generic question bank.
 
@@ -208,7 +207,7 @@ Initial product:
 - learning mode
 - history
 - weak areas
-- later: Code Navigation + AI Tutor
+- later: Code Book Practice + AI Tutor
 
 A fixed-duration access product is simpler than a monthly auto-renew subscription for v1.
 
@@ -222,6 +221,10 @@ A fixed-duration access product is simpler than a monthly auto-renew subscriptio
 - Validate all question IDs and answer IDs server-side.
 - RLS must prevent users reading other users' attempts.
 - Admin/editorial operations must be separated from learner APIs.
+
+## Independent development rule
+
+All product, content, terminology, and UI work must follow `docs/INDEPENDENT_DEVELOPMENT.md`. Competitor products are not source material for questions, explanations, code, wording, or interaction design.
 
 ## Copyright/content rule
 
