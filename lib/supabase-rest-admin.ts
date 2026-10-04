@@ -76,7 +76,7 @@ export async function insertStudySession(input: {
   id: string;
   userId: string;
   bankVersion: number;
-  mode: "full-exam" | "book-practice";
+  mode: "full-exam" | "book-practice" | "demo";
   feedbackMode: "deferred" | "immediate";
   startedAt: string;
   timeLimitSeconds: number | null;
