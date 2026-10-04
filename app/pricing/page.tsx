@@ -51,7 +51,7 @@ export default function PricingPage() {
           <li>Learning Mode with explanations and references</li>
           <li>English + Ukrainian content currently available</li>
           <li>Cross-device history and weak-area analytics</li>
-          <li>Code Navigation Mode and AI Tutor planned for the full product</li>
+          <li>Code Book Practice and AI Tutor planned for the full product</li>
         </ul>
 
         <button disabled={busy} onClick={() => void checkout()} className="btn primary mt-7 w-full disabled:opacity-50">
