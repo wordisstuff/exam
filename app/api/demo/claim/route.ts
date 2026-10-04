@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
   const user = await currentUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const userId = userId;
+  const userId = user.id;
 
   const body = await request.json().catch(() => null) as {
     answers?: unknown;
