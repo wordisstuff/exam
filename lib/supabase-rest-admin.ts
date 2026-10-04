@@ -287,3 +287,66 @@ export async function listAnswersForSessionIds(sessionIds: readonly string[]): P
   if (!response.ok) throw new Error(messageFromPayload(payload, "Unable to load study answers"));
   return Array.isArray(payload) ? payload as PersistedSessionAnswer[] : [];
 }
+
+
+export interface PersistedEntitlement {
+  id: string;
+  user_id: string;
+  product_code: string;
+  status: string;
+  starts_at: string | null;
+  ends_at: string | null;
+  stripe_customer_id: string | null;
+  stripe_checkout_session_id: string | null;
+  stripe_payment_intent_id: string | null;
+}
+
+export async function listUserEntitlements(userId: string): Promise<PersistedEntitlement[]> {
+  const response = await fetch(
+    restUrl("entitlements", {
+      user_id: `eq.${userId}`,
+      select: "*",
+      order: "created_at.desc",
+    }),
+    { headers: adminHeaders(), cache: "no-store" },
+  );
+
+  const payload = await parseJson(response);
+  if (!response.ok) throw new Error(messageFromPayload(payload, "Unable to load entitlements"));
+  return Array.isArray(payload) ? payload as PersistedEntitlement[] : [];
+}
+
+export async function upsertPaidEntitlementFromCheckout(input: {
+  userId: string;
+  productCode: string;
+  startsAt: string;
+  endsAt: string;
+  stripeCustomerId?: string | null;
+  stripeCheckoutSessionId: string;
+  stripePaymentIntentId?: string | null;
+}): Promise<void> {
+  const response = await fetch(
+    restUrl("entitlements", { on_conflict: "stripe_checkout_session_id" }),
+    {
+      method: "POST",
+      headers: {
+        ...adminHeaders(),
+        Prefer: "resolution=merge-duplicates,return=minimal",
+      },
+      body: JSON.stringify({
+        user_id: input.userId,
+        product_code: input.productCode,
+        status: "active",
+        starts_at: input.startsAt,
+        ends_at: input.endsAt,
+        stripe_customer_id: input.stripeCustomerId ?? null,
+        stripe_checkout_session_id: input.stripeCheckoutSessionId,
+        stripe_payment_intent_id: input.stripePaymentIntentId ?? null,
+      }),
+      cache: "no-store",
+    },
+  );
+
+  const payload = await parseJson(response);
+  if (!response.ok) throw new Error(messageFromPayload(payload, "Unable to activate entitlement"));
+}
