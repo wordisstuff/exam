@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
@@ -10,6 +10,12 @@ export default function SignInPage() {
   const [step, setStep] = useState<"email" | "code">("email");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [fromDemo, setFromDemo] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setFromDemo(params.get("from") === "demo");
+  }, []);
 
   async function requestCode(event: React.FormEvent) {
     event.preventDefault();
@@ -43,7 +49,27 @@ export default function SignInPage() {
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "Unable to verify code.");
-      router.replace("/platform/dashboard");
+      const params = new URLSearchParams(window.location.search);
+      const requestedNext = params.get("next");
+      const safeNext = requestedNext?.startsWith("/") && !requestedNext.startsWith("//")
+        ? requestedNext
+        : "/platform/dashboard";
+
+      if (params.get("from") === "demo") {
+        const claim = window.sessionStorage.getItem("mnqb:demo-claim");
+        if (claim) {
+          const claimResponse = await fetch("/api/demo/claim", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: claim,
+          });
+          if (claimResponse.ok) {
+            window.sessionStorage.removeItem("mnqb:demo-claim");
+          }
+        }
+      }
+
+      router.replace(safeNext);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to verify code.");
@@ -56,8 +82,12 @@ export default function SignInPage() {
     <main className="grid min-h-screen place-items-center p-4">
       <section className="card w-full max-w-md p-8">
         <p className="tag">QB Practice Platform</p>
-        <h1 className="mt-4 text-3xl font-bold">Sign in</h1>
-        <p className="muted mt-2">Use your email to continue your progress across devices.</p>
+        <h1 className="mt-4 text-3xl font-bold">{fromDemo ? "Keep your demo progress" : "Sign in"}</h1>
+        <p className="muted mt-2">
+          {fromDemo
+            ? "Enter your email, verify it, and we’ll attach your completed demo to your account."
+            : "Use your email to continue your progress across devices."}
+        </p>
 
         {step === "email" ? (
           <form className="mt-6" onSubmit={requestCode}>
@@ -73,7 +103,7 @@ export default function SignInPage() {
               placeholder="you@example.com"
             />
             <button disabled={busy} className="btn primary mt-5 w-full disabled:opacity-50">
-              {busy ? "Sending…" : "Send sign-in code"}
+              {busy ? "Sending…" : fromDemo ? "Send verification code" : "Send sign-in code"}
             </button>
           </form>
         ) : (
@@ -91,7 +121,7 @@ export default function SignInPage() {
               placeholder="123456"
             />
             <button disabled={busy} className="btn primary mt-5 w-full disabled:opacity-50">
-              {busy ? "Verifying…" : "Verify and continue"}
+              {busy ? "Verifying…" : fromDemo ? "Verify and save progress" : "Verify and continue"}
             </button>
             <button
               type="button"
