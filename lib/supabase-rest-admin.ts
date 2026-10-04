@@ -220,6 +220,12 @@ export async function upsertSessionAnswers(rows: Array<{
   isCorrect?: boolean | null;
   questionTimeSeconds?: number;
   flagged?: boolean;
+  responsePath?: "direct" | "book-assisted" | null;
+  bookSearchStartedAt?: string | null;
+  bookSearchCompletedAt?: string | null;
+  bookSearchSeconds?: number | null;
+  reportedSection?: string | null;
+  indexTerm?: string | null;
 }>): Promise<void> {
   if (!rows.length) return;
 
@@ -231,6 +237,12 @@ export async function upsertSessionAnswers(rows: Array<{
     ...(input.isCorrect !== undefined ? { is_correct: input.isCorrect } : {}),
     ...(input.questionTimeSeconds !== undefined ? { question_time_seconds: input.questionTimeSeconds } : {}),
     ...(input.flagged !== undefined ? { flagged: input.flagged } : {}),
+    ...(input.responsePath !== undefined ? { response_path: input.responsePath } : {}),
+    ...(input.bookSearchStartedAt !== undefined ? { book_search_started_at: input.bookSearchStartedAt } : {}),
+    ...(input.bookSearchCompletedAt !== undefined ? { book_search_completed_at: input.bookSearchCompletedAt } : {}),
+    ...(input.bookSearchSeconds !== undefined ? { book_search_seconds: input.bookSearchSeconds } : {}),
+    ...(input.reportedSection !== undefined ? { reported_section: input.reportedSection } : {}),
+    ...(input.indexTerm !== undefined ? { index_term: input.indexTerm } : {}),
   }));
 
   const response = await fetch(restUrl("session_answers", { on_conflict: "session_id,question_id" }), {
