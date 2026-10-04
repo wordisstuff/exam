@@ -133,9 +133,11 @@ And preserve:
 Do not add yet:
 - Spanish translation
 - AI Tutor
-- Code Navigation UI
+- Code Book Practice UI
 - 500+ bank expansion
 - admin CMS
 - recurring monthly subscriptions
 
 Those come after auth/server grading/payment foundation is stable.
+
+All later product work must follow `docs/INDEPENDENT_DEVELOPMENT.md`.
