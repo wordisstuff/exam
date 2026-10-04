@@ -195,7 +195,7 @@ export default function PlatformDashboard() {
         <h2 className="font-bold">Migration status</h2>
         <p className="muted mt-2">
           Full Exam, grading, resume, history, weak-area analytics, and paid-access architecture are server-backed.
-          Code Navigation Mode and content expansion are next.
+          Code Book Practice and content expansion are next.
         </p>
       </section>
     </main>
