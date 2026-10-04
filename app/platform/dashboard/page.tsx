@@ -53,7 +53,13 @@ export default function PlatformDashboard() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    setDemoSaved(params.get("demo") === "saved");
+    const savedDemo = params.get("demo") === "saved";
+    setDemoSaved(savedDemo);
+    if (savedDemo) {
+      params.delete("demo");
+      const cleanQuery = params.toString();
+      window.history.replaceState({}, "", `${window.location.pathname}${cleanQuery ? `?${cleanQuery}` : ""}`);
+    }
 
     Promise.all([
       fetch("/api/auth/me", { cache: "no-store" }),
