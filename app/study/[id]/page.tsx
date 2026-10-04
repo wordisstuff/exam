@@ -166,8 +166,8 @@ export default function StudySessionPage() {
         selectedAnswerIds: values,
         questionTimeSeconds: questionSeconds(),
         check,
-        responsePath: responsePath[questionId] ?? "direct",
-        bookSearchSeconds: bookSeconds[questionId],
+        responsePath: session?.mode === "book-practice" ? (responsePath[questionId] ?? "direct") : undefined,
+        bookSearchSeconds: session?.mode === "book-practice" ? bookSeconds[questionId] : undefined,
       }),
     });
     const body = await response.json();
@@ -308,7 +308,7 @@ export default function StudySessionPage() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 p-3">
           <div>
             <strong>QB Practice Platform</strong>
-            <span className="muted ml-3 text-sm">{session.feedbackMode === "immediate" ? "Learning Mode" : "Exam Mode"}</span>
+            <span className="muted ml-3 text-sm">{session.mode === "book-practice" ? "Code Book Practice" : session.feedbackMode === "immediate" ? "Learning Mode" : "Exam Mode"}</span>
           </div>
           <div className="flex items-center gap-3">
             {remaining !== null && <span className="font-mono font-bold">{fmt(remaining)}</span>}
@@ -338,7 +338,7 @@ export default function StudySessionPage() {
           </button>
           {uk && <p lang="uk" className="mt-3 border-l-4 border-teal-700 pl-4">{question.questionUk}</p>}
 
-          {session.feedbackMode === "immediate" && !checked && (
+          {session.mode === "book-practice" && !checked && (
             <div className="mt-5 rounded-lg border bg-slate-50 p-4">
               <p className="font-bold">Code Book Practice</p>
               {!bookStartedAt[question.id] && responsePath[question.id] !== "book-assisted" && (
