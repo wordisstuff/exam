@@ -98,31 +98,7 @@ export async function POST(request: Request) {
     };
   });
 
-  try {
-    const existing = await getClaimedDemoSession(user.id, demoClaimKey);
-    if (existing) {
-      return NextResponse.json({
-        saved: true,
-        duplicate: true,
-        sessionId: existing.id,
-        score: gradedRows.filter(row => row.isCorrect).length,
-        total: gradedRows.length,
-      });
-    }
-
-    const sessionId = crypto.randomUUID();
-    await insertStudySession({
-      id: sessionId,
-      userId: user.id,
-      bankVersion: QUESTION_BANK_VERSION,
-      mode: "demo",
-      feedbackMode: "immediate",
-      startedAt,
-      timeLimitSeconds: null,
-      questionIds: [...DEMO_QUESTION_IDS],
-      demoClaimKey,
-    });
-
+  async function persistClaim(sessionId: string) {
     const checkedAt = new Date().toISOString();
     const rows = gradedRows.map(answer => ({
       sessionId,
@@ -134,17 +110,14 @@ export async function POST(request: Request) {
 
     await upsertSessionAnswers(rows);
     await completeStudySession(sessionId, user.id, checkedAt);
+    return rows;
+  }
 
-    return NextResponse.json({
-      saved: true,
-      duplicate: false,
-      sessionId,
-      score: rows.filter(row => row.isCorrect).length,
-      total: rows.length,
-    });
-  } catch (error) {
-    const existing = await getClaimedDemoSession(user.id, demoClaimKey).catch(() => null);
-    if (existing) {
+  try {
+    let existing = await getClaimedDemoSession(user.id, demoClaimKey);
+    let duplicate = Boolean(existing);
+
+    if (existing?.status === "completed") {
       return NextResponse.json({
         saved: true,
         duplicate: true,
@@ -154,6 +127,48 @@ export async function POST(request: Request) {
       });
     }
 
+    let sessionId = existing?.id;
+    if (!sessionId) {
+      sessionId = crypto.randomUUID();
+      try {
+        await insertStudySession({
+          id: sessionId,
+          userId: user.id,
+          bankVersion: QUESTION_BANK_VERSION,
+          mode: "demo",
+          feedbackMode: "immediate",
+          startedAt,
+          timeLimitSeconds: null,
+          questionIds: [...DEMO_QUESTION_IDS],
+          demoClaimKey,
+        });
+      } catch (error) {
+        existing = await getClaimedDemoSession(user.id, demoClaimKey);
+        if (!existing) throw error;
+        sessionId = existing.id;
+        duplicate = true;
+        if (existing.status === "completed") {
+          return NextResponse.json({
+            saved: true,
+            duplicate: true,
+            sessionId,
+            score: gradedRows.filter(row => row.isCorrect).length,
+            total: gradedRows.length,
+          });
+        }
+      }
+    }
+
+    const rows = await persistClaim(sessionId);
+
+    return NextResponse.json({
+      saved: true,
+      duplicate,
+      sessionId,
+      score: rows.filter(row => row.isCorrect).length,
+      total: rows.length,
+    });
+  } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unable to save demo progress." },
       { status: 500 },
