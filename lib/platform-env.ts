@@ -1,4 +1,4 @@
-export type PlatformDataMode = "local" | "supabase";
+export type PlatformDataMode = "supabase";
 
 type EnvSource = Record<string, string | undefined>;
 
@@ -31,11 +31,11 @@ function validateUrl(value: string, key: string): string {
 }
 
 export function platformDataMode(env: EnvSource = process.env): PlatformDataMode {
-  const value = env.NEXT_PUBLIC_PLATFORM_DATA_MODE?.trim() || "local";
-  if (value !== "local" && value !== "supabase") {
-    throw new Error("NEXT_PUBLIC_PLATFORM_DATA_MODE must be 'local' or 'supabase'");
+  const value = env.NEXT_PUBLIC_PLATFORM_DATA_MODE?.trim();
+  if (value && value !== "supabase") {
+    throw new Error("NEXT_PUBLIC_PLATFORM_DATA_MODE must be 'supabase'");
   }
-  return value;
+  return "supabase";
 }
 
 export function publicSupabaseConfig(env: EnvSource = process.env): PublicSupabaseConfig {

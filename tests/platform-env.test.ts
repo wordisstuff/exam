@@ -2,18 +2,22 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { platformDataMode, publicSupabaseConfig, serverSupabaseConfig } from "../lib/platform-env.ts";
 
-test("platform data mode defaults to local", () => {
-  assert.equal(platformDataMode({}), "local");
+test("platform data mode defaults to supabase", () => {
+  assert.equal(platformDataMode({}), "supabase");
 });
 
 test("platform data mode accepts supabase", () => {
   assert.equal(platformDataMode({ NEXT_PUBLIC_PLATFORM_DATA_MODE: "supabase" }), "supabase");
 });
 
-test("platform data mode rejects unknown values", () => {
+test("platform data mode rejects legacy local and unknown values", () => {
+  assert.throws(
+    () => platformDataMode({ NEXT_PUBLIC_PLATFORM_DATA_MODE: "local" }),
+    /must be 'supabase'/,
+  );
   assert.throws(
     () => platformDataMode({ NEXT_PUBLIC_PLATFORM_DATA_MODE: "remote" }),
-    /must be 'local' or 'supabase'/,
+    /must be 'supabase'/,
   );
 });
 
