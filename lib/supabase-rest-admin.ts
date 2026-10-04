@@ -12,6 +12,7 @@ export interface PersistedStudySession {
   time_limit_seconds: number | null;
   current_index: number;
   question_ids: string[];
+  demo_claim_key?: string | null;
 }
 
 export interface PersistedSessionAnswer {
@@ -81,6 +82,7 @@ export async function insertStudySession(input: {
   startedAt: string;
   timeLimitSeconds: number | null;
   questionIds: string[];
+  demoClaimKey?: string | null;
 }): Promise<PersistedStudySession> {
   const response = await fetch(restUrl("study_sessions"), {
     method: "POST",
@@ -99,6 +101,7 @@ export async function insertStudySession(input: {
       time_limit_seconds: input.timeLimitSeconds,
       current_index: 0,
       question_ids: input.questionIds,
+      ...(input.demoClaimKey ? { demo_claim_key: input.demoClaimKey } : {}),
     }),
     cache: "no-store",
   });
@@ -107,6 +110,26 @@ export async function insertStudySession(input: {
   if (!response.ok) throw new Error(messageFromPayload(payload, "Unable to persist study session"));
   if (!Array.isArray(payload) || !payload[0]) throw new Error("Supabase did not return the created study session");
   return payload[0] as PersistedStudySession;
+}
+
+
+export async function getClaimedDemoSession(userId: string, demoClaimKey: string): Promise<PersistedStudySession | null> {
+  const response = await fetch(
+    restUrl("study_sessions", {
+      user_id: `eq.${userId}`,
+      demo_claim_key: `eq.${demoClaimKey}`,
+      select: "*",
+      limit: "1",
+    }),
+    {
+      headers: adminHeaders(),
+      cache: "no-store",
+    },
+  );
+
+  const payload = await parseJson(response);
+  if (!response.ok) throw new Error(messageFromPayload(payload, "Unable to load claimed demo session"));
+  return Array.isArray(payload) && payload[0] ? payload[0] as PersistedStudySession : null;
 }
 
 export async function getOwnedStudySession(sessionId: string, userId: string): Promise<PersistedStudySession | null> {
