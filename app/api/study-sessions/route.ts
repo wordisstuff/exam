@@ -4,6 +4,7 @@ import { platformDataMode } from "@/lib/platform-env";
 import { buildServerFullExamSession } from "@/lib/server-session";
 import { currentUser } from "@/lib/server-auth";
 import { insertStudySession } from "@/lib/supabase-rest-admin";
+import { requirePaidAccess } from "@/lib/access-control";
 import type { FeedbackMode } from "@/lib/types";
 
 function parseFeedbackMode(value: unknown): FeedbackMode | null {
@@ -16,8 +17,16 @@ export async function POST(request: Request) {
   }
 
   const user = await currentUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  try {
+    await requirePaidAccess(user.id);
+  } catch (error) {
+    const code = (error as Error & { code?: string }).code;
+    if (code === "PAYMENT_REQUIRED") {
+      return NextResponse.json({ error: "Paid access is required.", code }, { status: 402 });
+    }
+    return NextResponse.json({ error: "Unable to verify access." }, { status: 500 });
   }
 
   const body = await request.json().catch(() => null) as {
