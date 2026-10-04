@@ -98,7 +98,7 @@ export default function PlatformHistoryPage() {
                 {history.map(item => (
                   <tr key={item.id} className="border-b">
                     <td className="py-3 pr-4">{new Date(item.startedAt).toLocaleDateString()}</td>
-                    <td className="py-3 pr-4">{item.feedbackMode === "immediate" ? "Learning" : "Exam"}</td>
+                    <td className="py-3 pr-4">{item.mode === "book-practice" ? "Code Book Practice" : item.feedbackMode === "immediate" ? "Learning" : "Exam"}</td>
                     <td className="py-3 pr-4">{item.status}</td>
                     <td className="py-3 pr-4">{item.score === null ? "—" : `${item.score.toFixed(1)}%`}</td>
                     <td className="py-3 pr-4">{item.correct}/{item.total}</td>
