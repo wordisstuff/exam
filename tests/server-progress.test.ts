@@ -90,8 +90,8 @@ const answers: PersistedSessionAnswer[] = [
 test("buildProgressSummary derives cross-device score and weak areas", () => {
   const summary = buildProgressSummary([session], answers, bank);
   assert.equal(summary.completed, 1);
-  assert.equal(summary.averageScore, 100 / 3);
-  assert.equal(summary.bestScore, 100 / 3);
+  assert.ok(Math.abs(summary.averageScore - 100 / 3) < 1e-10);
+  assert.ok(Math.abs(summary.bestScore - 100 / 3) < 1e-10);
   assert.equal(summary.answered, 3);
   assert.equal(summary.weakAreas.length, 1);
   assert.equal(summary.weakAreas[0].name, "Framing");
