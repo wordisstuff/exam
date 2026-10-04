@@ -24,6 +24,16 @@ interface ProgressSummary {
   bestScore: number;
   answered: number;
   weakAreas: Array<{ name: string; correct: number; total: number; percentage: number; averageSeconds: number }>;
+  bookPractice: {
+    directAnswers: number;
+    directCorrect: number;
+    directAccuracy: number;
+    bookAssistedAnswers: number;
+    bookAssistedCorrect: number;
+    bookAssistedAccuracy: number;
+    averageBookSearchSeconds: number;
+    topics: Array<{ name: string; searches: number; averageSearchSeconds: number; bookAssistedAccuracy: number }>;
+  };
   activeSessions: Array<{ id: string; mode: string; feedbackMode: string; startedAt: string; answered: number; total: number }>;
 }
 
@@ -32,7 +42,7 @@ export default function PlatformDashboard() {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [access, setAccess] = useState<AccessState | null>(null);
   const [progress, setProgress] = useState<ProgressSummary | null>(null);
-  const [busy, setBusy] = useState<"deferred" | "immediate" | null>(null);
+  const [busy, setBusy] = useState<"deferred" | "immediate" | "book-practice" | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -85,6 +95,32 @@ export default function PlatformDashboard() {
       router.push(`/study/${body.session.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to start exam.");
+      setBusy(null);
+    }
+  }
+
+  async function startBookPractice() {
+    if (access && !access.paid) {
+      router.push("/pricing");
+      return;
+    }
+    setBusy("book-practice");
+    setError("");
+    try {
+      const response = await fetch("/api/study-sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode: "book-practice" }),
+      });
+      const body = await response.json();
+      if (response.status === 402) {
+        router.push("/pricing");
+        return;
+      }
+      if (!response.ok) throw new Error(body.error || "Unable to start Code Book Practice.");
+      router.push(`/study/${body.session.id}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to start Code Book Practice.");
       setBusy(null);
     }
   }
@@ -143,7 +179,7 @@ export default function PlatformDashboard() {
               <div className="mt-3 grid gap-3">
                 {progress.activeSessions.map(session => (
                   <button key={session.id} onClick={() => router.push(`/study/${session.id}`)} className="rounded-lg border p-4 text-left hover:bg-slate-50">
-                    <strong>{session.feedbackMode === "immediate" ? "Learning Mode" : "Exam Mode"}</strong>
+                    <strong>{session.mode === "book-practice" ? "Code Book Practice" : session.feedbackMode === "immediate" ? "Learning Mode" : "Exam Mode"}</strong>
                     <span className="muted ml-3 text-sm">{session.answered}/{session.total} answered</span>
                   </button>
                 ))}
@@ -153,7 +189,7 @@ export default function PlatformDashboard() {
         </>
       )}
 
-      <section className="mt-8 grid gap-5 md:grid-cols-2">
+      <section className="mt-8 grid gap-5 lg:grid-cols-3">
         <article className="card">
           <h2 className="text-xl font-bold">Exam Mode</h2>
           <p className="muted mt-2">110 questions · 5h30m · no correctness revealed until Finish.</p>
@@ -169,7 +205,48 @@ export default function PlatformDashboard() {
             {busy === "immediate" ? "Creating…" : access?.paid === false ? "Paid access required" : "Start Learning Mode"}
           </button>
         </article>
+
+        <article className="card">
+          <h2 className="text-xl font-bold">Code Book Practice</h2>
+          <p className="muted mt-2">20 questions focused on finding the rule efficiently in your physical code book.</p>
+          <button disabled={busy !== null || access?.paid === false} onClick={() => void startBookPractice()} className="btn primary mt-5 disabled:opacity-50">
+            {busy === "book-practice" ? "Creating…" : access?.paid === false ? "Paid access required" : "Start Code Book Practice"}
+          </button>
+        </article>
       </section>
+
+      {progress && progress.bookPractice && (
+        <section className="card mt-6">
+          <h2 className="font-bold">Code Book Practice analytics</h2>
+          <div className="mt-3 grid gap-3 md:grid-cols-3">
+            <div className="rounded-lg border p-3">
+              <p className="muted text-sm">Direct Answer Accuracy</p>
+              <p className="mt-1 text-2xl font-bold">{progress.bookPractice.directAccuracy.toFixed(0)}%</p>
+              <p className="muted text-xs">{progress.bookPractice.directCorrect}/{progress.bookPractice.directAnswers}</p>
+            </div>
+            <div className="rounded-lg border p-3">
+              <p className="muted text-sm">Book-Assisted Accuracy</p>
+              <p className="mt-1 text-2xl font-bold">{progress.bookPractice.bookAssistedAccuracy.toFixed(0)}%</p>
+              <p className="muted text-xs">{progress.bookPractice.bookAssistedCorrect}/{progress.bookPractice.bookAssistedAnswers}</p>
+            </div>
+            <div className="rounded-lg border p-3">
+              <p className="muted text-sm">Average Book Search</p>
+              <p className="mt-1 text-2xl font-bold">{Math.round(progress.bookPractice.averageBookSearchSeconds)} sec</p>
+              <p className="muted text-xs">Timed physical-book searches</p>
+            </div>
+          </div>
+          {progress.bookPractice.topics.length > 0 && (
+            <div className="mt-4 grid gap-2">
+              {progress.bookPractice.topics.slice(0, 4).map(topic => (
+                <div key={topic.name} className="flex flex-wrap justify-between gap-2 rounded-lg border p-3 text-sm">
+                  <strong>{topic.name}</strong>
+                  <span className="muted">{Math.round(topic.averageSearchSeconds)} sec avg · {topic.bookAssistedAccuracy.toFixed(0)}% accurate</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
 
       {progress && (
         <section className="card mt-6">
@@ -195,7 +272,7 @@ export default function PlatformDashboard() {
         <h2 className="font-bold">Migration status</h2>
         <p className="muted mt-2">
           Full Exam, grading, resume, history, weak-area analytics, and paid-access architecture are server-backed.
-          Code Book Practice and content expansion are next.
+          Code Book Practice now has its own session type and analytics. Free demo and content expansion are next.
         </p>
       </section>
     </main>
