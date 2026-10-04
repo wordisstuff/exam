@@ -97,3 +97,75 @@ test("buildProgressSummary derives cross-device score and weak areas", () => {
   assert.equal(summary.weakAreas[0].name, "Framing");
   assert.equal(summary.weakAreas[0].averageSeconds, 60);
 });
+
+
+test("buildProgressSummary keeps Code Book Practice analytics independent from other modes", () => {
+  const bookSession: PersistedStudySession = {
+    ...session,
+    id: "book-1",
+    mode: "book-practice",
+  };
+
+  const learningSession: PersistedStudySession = {
+    ...session,
+    id: "learning-1",
+    mode: "full-exam",
+    feedback_mode: "immediate",
+  };
+
+  const bookAnswers: PersistedSessionAnswer[] = [
+    {
+      session_id: "book-1",
+      question_id: "q1",
+      selected_answer_ids: ["a"],
+      checked_at: "",
+      is_correct: true,
+      question_time_seconds: 40,
+      flagged: false,
+      response_path: "direct",
+    },
+    {
+      session_id: "book-1",
+      question_id: "q2",
+      selected_answer_ids: ["a"],
+      checked_at: "",
+      is_correct: true,
+      question_time_seconds: 80,
+      flagged: false,
+      response_path: "book-assisted",
+      book_search_seconds: 50,
+    },
+    {
+      session_id: "book-1",
+      question_id: "q3",
+      selected_answer_ids: ["b"],
+      checked_at: "",
+      is_correct: false,
+      question_time_seconds: 100,
+      flagged: false,
+      response_path: "book-assisted",
+      book_search_seconds: 70,
+    },
+    {
+      session_id: "learning-1",
+      question_id: "q1",
+      selected_answer_ids: ["a"],
+      checked_at: "",
+      is_correct: true,
+      question_time_seconds: 20,
+      flagged: false,
+      response_path: "direct",
+    },
+  ];
+
+  const summary = buildProgressSummary([bookSession, learningSession], bookAnswers, bank);
+
+  assert.equal(summary.bookPractice.directAnswers, 1);
+  assert.equal(summary.bookPractice.directAccuracy, 100);
+  assert.equal(summary.bookPractice.bookAssistedAnswers, 2);
+  assert.equal(summary.bookPractice.bookAssistedCorrect, 1);
+  assert.equal(summary.bookPractice.bookAssistedAccuracy, 50);
+  assert.equal(summary.bookPractice.averageBookSearchSeconds, 60);
+  assert.equal(summary.bookPractice.topics.length, 1);
+  assert.equal(summary.bookPractice.topics[0].name, "Framing");
+});
