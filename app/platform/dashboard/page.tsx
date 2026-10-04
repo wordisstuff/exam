@@ -37,6 +37,11 @@ interface ProgressSummary {
   activeSessions: Array<{ id: string; mode: string; feedbackMode: string; startedAt: string; answered: number; total: number }>;
 }
 
+function modeLabel(session: { mode: string; feedbackMode: string }) {
+  if (session.mode === "book-practice") return "Code Book Practice";
+  return session.feedbackMode === "immediate" ? "Learning Mode" : "Exam Mode";
+}
+
 export default function PlatformDashboard() {
   const router = useRouter();
   const [user, setUser] = useState<UserInfo | null>(null);
@@ -82,6 +87,7 @@ export default function PlatformDashboard() {
       router.push("/pricing");
       return;
     }
+
     setBusy(feedbackMode);
     setError("");
     try {
@@ -91,6 +97,7 @@ export default function PlatformDashboard() {
         body: JSON.stringify({ mode: "full-exam", feedbackMode }),
       });
       const body = await response.json();
+
       if (response.status === 402) {
         router.push("/pricing");
         return;
@@ -108,6 +115,7 @@ export default function PlatformDashboard() {
       router.push("/pricing");
       return;
     }
+
     setBusy("book-practice");
     setError("");
     try {
@@ -117,6 +125,7 @@ export default function PlatformDashboard() {
         body: JSON.stringify({ mode: "book-practice" }),
       });
       const body = await response.json();
+
       if (response.status === 402) {
         router.push("/pricing");
         return;
@@ -137,155 +146,234 @@ export default function PlatformDashboard() {
 
   if (!user) return null;
 
+  const firstActive = progress?.activeSessions[0] ?? null;
+
   return (
-    <main className="mx-auto max-w-6xl p-4 md:p-8">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="tag">Server-backed preview</p>
-          <h1 className="mt-3 text-3xl font-bold">Welcome, {user.displayName}</h1>
-          <p className="muted mt-1">Your Full Exam, grading, and progress are stored on the server.</p>
-        </div>
-        <div className="flex gap-4 text-sm">
-          <button className="underline" onClick={() => router.push("/platform/history")}>History</button>
-          <button className="underline" onClick={() => void signOut()}>Sign out</button>
+    <main className="min-h-screen">
+      <header className="topbar">
+        <div className="app-shell flex min-h-16 items-center justify-between gap-4">
+          <div>
+            <p className="text-sm font-extrabold tracking-tight">Minnesota QB Practice</p>
+            <p className="muted text-xs">Your study dashboard</p>
+          </div>
+          <div className="flex items-center gap-1">
+            <button className="btn ghost" onClick={() => router.push("/platform/history")}>History</button>
+            <button className="btn ghost" onClick={() => void signOut()}>Sign out</button>
+          </div>
         </div>
       </header>
 
-      {access?.enforcement && (
-        <section className="card mt-5">
-          {access.paid ? (
-            <p><strong>Paid access active.</strong> <span className="muted">Through {access.endsAt ? new Date(access.endsAt).toLocaleDateString() : "—"}.</span></p>
-          ) : (
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div><strong>Full access required</strong><p className="muted text-sm">Unlock the 180-day QB practice platform.</p></div>
-              <button onClick={() => router.push("/pricing")} className="btn primary">View $199 access</button>
-            </div>
+      <div className="app-shell py-7 md:py-10">
+        <section className="flex flex-wrap items-end justify-between gap-5">
+          <div>
+            <p className="eyebrow">Study dashboard</p>
+            <h1 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">
+              Welcome back, {user.displayName}
+            </h1>
+            <p className="muted mt-2">Choose a mode, continue where you left off, and watch your weak areas improve.</p>
+          </div>
+
+          {access?.enforcement && access.paid && access.endsAt && (
+            <div className="tag">Access through {new Date(access.endsAt).toLocaleDateString()}</div>
           )}
         </section>
-      )}
 
-      {demoSaved && (
-        <section className="mt-5 rounded-lg border border-green-200 bg-green-50 p-4 text-green-900">
-          <strong>Demo progress saved.</strong>
-          <span className="ml-2">Your 10-question demo is now part of this account’s study history.</span>
-        </section>
-      )}
-
-      {error && <p role="alert" className="mt-5 rounded-lg border border-red-200 bg-red-50 p-3 text-red-800">{error}</p>}
-
-      {progress && (
-        <>
-          <section className="mt-7 grid grid-cols-2 gap-3 lg:grid-cols-4">
-            {[
-              ["Exams Completed", progress.completed],
-              ["Average Score", `${progress.averageScore.toFixed(1)}%`],
-              ["Best Score", `${progress.bestScore.toFixed(1)}%`],
-              ["Questions Answered", progress.answered],
-            ].map(item => <div className="card" key={item[0]}><p className="muted text-sm">{item[0]}</p><p className="mt-1 text-2xl font-bold">{item[1]}</p></div>)}
+        {demoSaved && (
+          <section className="alert-success mt-5 flex flex-wrap items-center justify-between gap-3 p-4">
+            <div>
+              <strong>Demo progress saved</strong>
+              <p className="mt-1 text-sm">Your 10-question demo is now in your study history.</p>
+            </div>
+            <button className="btn secondary" onClick={() => router.push("/platform/history")}>View history</button>
           </section>
+        )}
 
-          {progress.activeSessions.length > 0 && (
-            <section className="card mt-6">
-              <h2 className="font-bold">Continue an active session</h2>
-              <div className="mt-3 grid gap-3">
-                {progress.activeSessions.map(session => (
-                  <button key={session.id} onClick={() => router.push(`/study/${session.id}`)} className="rounded-lg border p-4 text-left hover:bg-slate-50">
-                    <strong>{session.mode === "book-practice" ? "Code Book Practice" : session.feedbackMode === "immediate" ? "Learning Mode" : "Exam Mode"}</strong>
-                    <span className="muted ml-3 text-sm">{session.answered}/{session.total} answered</span>
-                  </button>
+        {error && <p role="alert" className="alert-danger mt-5 p-4 text-sm">{error}</p>}
+
+        {access?.enforcement && !access.paid && (
+          <section className="card-elevated mt-6 grid gap-5 p-6 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <p className="eyebrow">Full access</p>
+              <h2 className="mt-2 text-2xl font-extrabold tracking-tight">Unlock the complete study platform</h2>
+              <p className="muted mt-2">Full Exam, Learning Mode, Code Book Practice, history, and analytics.</p>
+            </div>
+            <button onClick={() => router.push("/pricing")} className="btn primary">View access options</button>
+          </section>
+        )}
+
+        {firstActive && (
+          <section className="card-elevated mt-7 overflow-hidden p-0">
+            <div className="grid md:grid-cols-[1fr_auto] md:items-center">
+              <div className="p-6 md:p-7">
+                <p className="eyebrow">Continue where you left off</p>
+                <h2 className="mt-2 text-2xl font-extrabold tracking-tight">{modeLabel(firstActive)}</h2>
+                <p className="muted mt-2">
+                  {firstActive.answered} of {firstActive.total} questions answered
+                </p>
+                <div className="progress-track mt-4 max-w-xl">
+                  <div
+                    className="progress-fill"
+                    style={{ width: `${Math.min(100, (firstActive.answered / Math.max(firstActive.total, 1)) * 100)}%` }}
+                  />
+                </div>
+              </div>
+              <div className="border-t border-slate-200 p-6 md:border-l md:border-t-0">
+                <button className="btn primary w-full md:w-auto" onClick={() => router.push(`/study/${firstActive.id}`)}>
+                  Continue session
+                </button>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {progress && (
+          <section className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <div className="metric">
+              <p className="muted text-xs font-bold uppercase tracking-wider">Completed</p>
+              <p className="mt-2 text-2xl font-extrabold">{progress.completed}</p>
+            </div>
+            <div className="metric">
+              <p className="muted text-xs font-bold uppercase tracking-wider">Average score</p>
+              <p className="mt-2 text-2xl font-extrabold">{progress.averageScore.toFixed(1)}%</p>
+            </div>
+            <div className="metric">
+              <p className="muted text-xs font-bold uppercase tracking-wider">Best score</p>
+              <p className="mt-2 text-2xl font-extrabold">{progress.bestScore.toFixed(1)}%</p>
+            </div>
+            <div className="metric">
+              <p className="muted text-xs font-bold uppercase tracking-wider">Answered</p>
+              <p className="mt-2 text-2xl font-extrabold">{progress.answered}</p>
+            </div>
+          </section>
+        )}
+
+        <section className="mt-8">
+          <div className="mb-4 flex items-end justify-between gap-4">
+            <div>
+              <p className="eyebrow">Choose your training</p>
+              <h2 className="mt-1 text-2xl font-extrabold tracking-tight">Study modes</h2>
+            </div>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            <article className="card mode-card flex flex-col">
+              <span className="tag self-start">Exam simulation</span>
+              <h3 className="section-title mt-4">Full Exam</h3>
+              <p className="muted mt-3 flex-1 leading-6">110 questions · 5h 30m · results revealed when you finish.</p>
+              <button
+                disabled={busy !== null || access?.paid === false}
+                onClick={() => void start("deferred")}
+                className="btn primary mt-6 w-full disabled:opacity-50"
+              >
+                {busy === "deferred" ? "Creating…" : access?.paid === false ? "Full access required" : "Start Full Exam"}
+              </button>
+            </article>
+
+            <article className="card mode-card flex flex-col">
+              <span className="tag self-start">Learn as you go</span>
+              <h3 className="section-title mt-4">Learning Mode</h3>
+              <p className="muted mt-3 flex-1 leading-6">Check each answer immediately and study the explanation and code reference.</p>
+              <button
+                disabled={busy !== null || access?.paid === false}
+                onClick={() => void start("immediate")}
+                className="btn primary mt-6 w-full disabled:opacity-50"
+              >
+                {busy === "immediate" ? "Creating…" : access?.paid === false ? "Full access required" : "Start Learning Mode"}
+              </button>
+            </article>
+
+            <article className="card mode-card flex flex-col">
+              <span className="tag self-start">Navigation skill</span>
+              <h3 className="section-title mt-4">Code Book Practice</h3>
+              <p className="muted mt-3 flex-1 leading-6">20 questions built around finding the rule efficiently in your physical code book.</p>
+              <button
+                disabled={busy !== null || access?.paid === false}
+                onClick={() => void startBookPractice()}
+                className="btn primary mt-6 w-full disabled:opacity-50"
+              >
+                {busy === "book-practice" ? "Creating…" : access?.paid === false ? "Full access required" : "Start Code Book Practice"}
+              </button>
+            </article>
+          </div>
+        </section>
+
+        {progress && progress.bookPractice && (
+          <section className="card mt-7">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="eyebrow">Code Book Practice</p>
+                <h2 className="mt-1 text-xl font-extrabold tracking-tight">Navigation performance</h2>
+              </div>
+              {progress.bookPractice.bookAssistedAnswers === 0 && (
+                <span className="muted text-sm">Start a Code Book Practice session to build this view.</span>
+              )}
+            </div>
+
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              <div className="metric">
+                <p className="muted text-sm">Direct Answer Accuracy</p>
+                <p className="mt-2 text-3xl font-extrabold">{progress.bookPractice.directAccuracy.toFixed(0)}%</p>
+                <p className="muted mt-1 text-xs">{progress.bookPractice.directCorrect}/{progress.bookPractice.directAnswers} correct</p>
+              </div>
+              <div className="metric">
+                <p className="muted text-sm">Book-Assisted Accuracy</p>
+                <p className="mt-2 text-3xl font-extrabold">{progress.bookPractice.bookAssistedAccuracy.toFixed(0)}%</p>
+                <p className="muted mt-1 text-xs">{progress.bookPractice.bookAssistedCorrect}/{progress.bookPractice.bookAssistedAnswers} correct</p>
+              </div>
+              <div className="metric">
+                <p className="muted text-sm">Average Book Search</p>
+                <p className="mt-2 text-3xl font-extrabold">{Math.round(progress.bookPractice.averageBookSearchSeconds)} sec</p>
+                <p className="muted mt-1 text-xs">Timed physical-book searches</p>
+              </div>
+            </div>
+
+            {progress.bookPractice.topics.length > 0 && (
+              <div className="mt-5 grid gap-2">
+                {progress.bookPractice.topics.slice(0, 4).map(topic => (
+                  <div key={topic.name} className="soft-panel flex flex-wrap items-center justify-between gap-3 p-4 text-sm">
+                    <strong>{topic.name}</strong>
+                    <span className="muted">{Math.round(topic.averageSearchSeconds)} sec avg · {topic.bookAssistedAccuracy.toFixed(0)}% accurate</span>
+                  </div>
                 ))}
               </div>
-            </section>
-          )}
-        </>
-      )}
+            )}
+          </section>
+        )}
 
-      <section className="mt-8 grid gap-5 lg:grid-cols-3">
-        <article className="card">
-          <h2 className="text-xl font-bold">Exam Mode</h2>
-          <p className="muted mt-2">110 questions · 5h30m · no correctness revealed until Finish.</p>
-          <button disabled={busy !== null || access?.paid === false} onClick={() => void start("deferred")} className="btn primary mt-5 disabled:opacity-50">
-            {busy === "deferred" ? "Creating…" : access?.paid === false ? "Paid access required" : "Start Full Exam"}
-          </button>
-        </article>
-
-        <article className="card">
-          <h2 className="text-xl font-bold">Learning Mode</h2>
-          <p className="muted mt-2">Same verified pool with server-side Check Answer feedback.</p>
-          <button disabled={busy !== null || access?.paid === false} onClick={() => void start("immediate")} className="btn primary mt-5 disabled:opacity-50">
-            {busy === "immediate" ? "Creating…" : access?.paid === false ? "Paid access required" : "Start Learning Mode"}
-          </button>
-        </article>
-
-        <article className="card">
-          <h2 className="text-xl font-bold">Code Book Practice</h2>
-          <p className="muted mt-2">20 questions focused on finding the rule efficiently in your physical code book.</p>
-          <button disabled={busy !== null || access?.paid === false} onClick={() => void startBookPractice()} className="btn primary mt-5 disabled:opacity-50">
-            {busy === "book-practice" ? "Creating…" : access?.paid === false ? "Paid access required" : "Start Code Book Practice"}
-          </button>
-        </article>
-      </section>
-
-      {progress && progress.bookPractice && (
-        <section className="card mt-6">
-          <h2 className="font-bold">Code Book Practice analytics</h2>
-          <div className="mt-3 grid gap-3 md:grid-cols-3">
-            <div className="rounded-lg border p-3">
-              <p className="muted text-sm">Direct Answer Accuracy</p>
-              <p className="mt-1 text-2xl font-bold">{progress.bookPractice.directAccuracy.toFixed(0)}%</p>
-              <p className="muted text-xs">{progress.bookPractice.directCorrect}/{progress.bookPractice.directAnswers}</p>
+        {progress && (
+          <section className="card mt-7">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="eyebrow">Focus next</p>
+                <h2 className="mt-1 text-xl font-extrabold tracking-tight">Weak areas</h2>
+              </div>
+              <button className="btn ghost" onClick={() => router.push("/platform/history")}>Open full history</button>
             </div>
-            <div className="rounded-lg border p-3">
-              <p className="muted text-sm">Book-Assisted Accuracy</p>
-              <p className="mt-1 text-2xl font-bold">{progress.bookPractice.bookAssistedAccuracy.toFixed(0)}%</p>
-              <p className="muted text-xs">{progress.bookPractice.bookAssistedCorrect}/{progress.bookPractice.bookAssistedAnswers}</p>
-            </div>
-            <div className="rounded-lg border p-3">
-              <p className="muted text-sm">Average Book Search</p>
-              <p className="mt-1 text-2xl font-bold">{Math.round(progress.bookPractice.averageBookSearchSeconds)} sec</p>
-              <p className="muted text-xs">Timed physical-book searches</p>
-            </div>
-          </div>
-          {progress.bookPractice.topics.length > 0 && (
-            <div className="mt-4 grid gap-2">
-              {progress.bookPractice.topics.slice(0, 4).map(topic => (
-                <div key={topic.name} className="flex flex-wrap justify-between gap-2 rounded-lg border p-3 text-sm">
-                  <strong>{topic.name}</strong>
-                  <span className="muted">{Math.round(topic.averageSearchSeconds)} sec avg · {topic.bookAssistedAccuracy.toFixed(0)}% accurate</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      )}
 
-      {progress && (
-        <section className="card mt-6">
-          <div className="flex items-center justify-between">
-            <h2 className="font-bold">Weakest meaningful areas</h2>
-            <button className="text-sm underline" onClick={() => router.push("/platform/history")}>View full history</button>
-          </div>
-          {progress.weakAreas.length ? (
-            <div className="mt-3 grid gap-3 md:grid-cols-2">
-              {progress.weakAreas.slice(0, 4).map(area => (
-                <div key={area.name} className="rounded-lg border p-3">
-                  <strong>{area.name}</strong>
-                  <p className="mt-1">{area.percentage.toFixed(0)}% <span className="muted">({area.correct}/{area.total})</span></p>
-                  <p className="muted text-sm">Avg. {Math.round(area.averageSeconds)} sec/question</p>
-                </div>
-              ))}
-            </div>
-          ) : <p className="muted mt-2">Complete more questions to identify trends. At least 3 graded attempts per area are needed.</p>}
-        </section>
-      )}
-
-      <section className="card mt-6">
-        <h2 className="font-bold">Migration status</h2>
-        <p className="muted mt-2">
-          Full Exam, grading, resume, history, weak-area analytics, and paid-access architecture are server-backed.
-          Code Book Practice now has its own session type and analytics. Free demo and content expansion are next.
-        </p>
-      </section>
+            {progress.weakAreas.length ? (
+              <div className="mt-5 grid gap-3 md:grid-cols-2">
+                {progress.weakAreas.slice(0, 4).map(area => (
+                  <div key={area.name} className="soft-panel p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <strong>{area.name}</strong>
+                      <span className="font-extrabold">{area.percentage.toFixed(0)}%</span>
+                    </div>
+                    <div className="progress-track mt-3">
+                      <div className="progress-fill" style={{ width: `${Math.max(4, Math.min(100, area.percentage))}%` }} />
+                    </div>
+                    <p className="muted mt-2 text-xs">{area.correct}/{area.total} correct · {Math.round(area.averageSeconds)} sec/question</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="soft-panel mt-5 p-5">
+                <p className="font-bold">No weak-area pattern yet</p>
+                <p className="muted mt-1 text-sm">Complete more graded questions and this section will start prioritizing topics for you.</p>
+              </div>
+            )}
+          </section>
+        )}
+      </div>
     </main>
   );
 }
