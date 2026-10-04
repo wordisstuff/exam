@@ -285,14 +285,36 @@ export default function StudySessionPage() {
 
   if (result) {
     return (
-      <main className="mx-auto max-w-4xl p-4 md:p-8">
-        <section className="card text-center">
-          <p className={`text-2xl font-bold ${result.passed ? "text-green-700" : "text-red-700"}`}>
-            {result.passed ? "PASS" : "FAIL"}
-          </p>
-          <p className="mt-3 text-5xl font-bold">{result.percentage.toFixed(1)}%</p>
-          <p className="muted mt-2">{result.correct} correct · {result.incorrect} incorrect · {result.unanswered} unanswered</p>
-          <button className="btn primary mt-6" onClick={() => router.push("/platform/dashboard")}>Return to dashboard</button>
+      <main className="min-h-screen">
+        <header className="topbar">
+          <div className="app-shell flex min-h-16 items-center justify-between">
+            <div>
+              <p className="text-sm font-extrabold">Minnesota QB Practice</p>
+              <p className="muted text-xs">Session complete</p>
+            </div>
+            <button className="btn ghost" onClick={() => router.push("/platform/dashboard")}>Dashboard</button>
+          </div>
+        </header>
+
+        <section className="app-shell py-8 md:py-12">
+          <div className="card-elevated mx-auto max-w-3xl p-7 text-center md:p-10">
+            <p className="eyebrow">{session.mode === "book-practice" ? "Code Book Practice" : session.feedbackMode === "immediate" ? "Learning Mode" : "Full Exam"}</p>
+            <div className={`mx-auto mt-5 flex h-20 w-20 items-center justify-center rounded-full text-lg font-extrabold ${result.passed ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+              {result.passed ? "PASS" : "REVIEW"}
+            </div>
+            <p className="mt-5 text-5xl font-extrabold tracking-tight">{result.percentage.toFixed(1)}%</p>
+            <p className="muted mt-3">{result.correct} correct · {result.incorrect} incorrect · {result.unanswered} unanswered</p>
+
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              <div className="metric"><p className="muted text-xs">Correct</p><p className="mt-1 text-2xl font-extrabold">{result.correct}</p></div>
+              <div className="metric"><p className="muted text-xs">Incorrect</p><p className="mt-1 text-2xl font-extrabold">{result.incorrect}</p></div>
+              <div className="metric"><p className="muted text-xs">Unanswered</p><p className="mt-1 text-2xl font-extrabold">{result.unanswered}</p></div>
+            </div>
+
+            <button className="btn primary mt-7 w-full sm:w-auto sm:px-8" onClick={() => router.push("/platform/dashboard")}>
+              Back to dashboard
+            </button>
+          </div>
         </section>
       </main>
     );
@@ -303,44 +325,56 @@ export default function StudySessionPage() {
   const answered = Object.values(selected).filter(items => items.length > 0).length;
 
   return (
-    <div className="min-h-screen">
-      <header className="sticky top-0 z-10 border-b bg-white">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 p-3">
-          <div>
-            <strong>QB Practice Platform</strong>
-            <span className="muted ml-3 text-sm">{session.mode === "book-practice" ? "Code Book Practice" : session.feedbackMode === "immediate" ? "Learning Mode" : "Exam Mode"}</span>
+    <div className="min-h-screen pb-4">
+      <header className="topbar">
+        <div className="app-shell flex min-h-16 items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-extrabold">Minnesota QB Practice</p>
+            <p className="muted truncate text-xs">{session.mode === "book-practice" ? "Code Book Practice" : session.feedbackMode === "immediate" ? "Learning Mode" : "Full Exam"}</p>
           </div>
-          <div className="flex items-center gap-3">
-            {remaining !== null && <span className="font-mono font-bold">{fmt(remaining)}</span>}
-            <button disabled={busy} onClick={() => void finish()} className="btn primary disabled:opacity-50">
+          <div className="flex shrink-0 items-center gap-2">
+            {remaining !== null && (
+              <span className={`rounded-lg px-3 py-2 font-mono text-sm font-extrabold ${remaining < 600 ? "bg-red-50 text-red-700" : "bg-white"}`}>
+                {fmt(remaining)}
+              </span>
+            )}
+            <button disabled={busy} onClick={() => void finish()} className="btn secondary disabled:opacity-50">
               {busy ? "Saving…" : "Finish"}
             </button>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto grid max-w-7xl gap-5 p-4 lg:grid-cols-[1fr_300px]">
-        <section className="card min-w-0">
+      <main className="app-shell grid gap-5 py-5 md:py-8 lg:grid-cols-[1fr_300px]">
+        <section className="card-elevated min-w-0 p-5 md:p-8">
           <div className="flex flex-wrap justify-between gap-3">
             <div>
               <p className="font-bold">Question {currentIndex + 1} of {session.questions.length}</p>
               <p className="muted text-sm">{question.primaryCategory} · {question.subcategory}</p>
             </div>
-            <span className="tag">Server graded</span>
+            <span className="tag">{session.mode === "book-practice" ? "Book practice" : session.feedbackMode === "immediate" ? "Instant feedback" : "Exam session"}</span>
           </div>
 
-          <progress className="my-4 w-full" value={answered} max={session.questions.length} />
-          <p className="muted text-sm">{answered} answered</p>
+          <div className="progress-track mt-5">
+            <div className="progress-fill" style={{ width: `${Math.min(100, (answered / Math.max(session.questions.length, 1)) * 100)}%` }} />
+          </div>
+          <p className="muted mt-2 text-xs">{answered} answered · {session.questions.length - answered} remaining</p>
 
-          <h1 className="mt-6 text-xl font-bold leading-8">{question.question}</h1>
-          <button className="mt-3 text-sm font-bold text-teal-800 underline" onClick={() => setUk(value => !value)}>
+          <h1 className="mt-6 text-xl font-extrabold leading-8 tracking-tight md:text-2xl">{question.question}</h1>
+          <button className="btn ghost mt-2 px-0 text-sm" onClick={() => setUk(value => !value)}>
             {uk ? "Hide Ukrainian" : "Show Ukrainian"}
           </button>
-          {uk && <p lang="uk" className="mt-3 border-l-4 border-teal-700 pl-4">{question.questionUk}</p>}
+          {uk && <p lang="uk" className="soft-panel mt-3 border-l-4 border-l-emerald-700 p-4">{question.questionUk}</p>}
 
           {session.mode === "book-practice" && !checked && (
-            <div className="mt-5 rounded-lg border bg-slate-50 p-4">
-              <p className="font-bold">Code Book Practice</p>
+            <div className="soft-panel mt-5 p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="font-extrabold">Code Book Practice</p>
+                  <p className="muted mt-1 text-sm">Time how long it takes to find the rule in your physical book.</p>
+                </div>
+                {responsePath[question.id] === "book-assisted" && bookSeconds[question.id] !== undefined && <span className="tag">{bookSeconds[question.id]} sec</span>}
+              </div>
               {!bookStartedAt[question.id] && responsePath[question.id] !== "book-assisted" && (
                 <button type="button" className="btn secondary mt-3" onClick={startBookSearch}>
                   Use Code Book
@@ -354,11 +388,8 @@ export default function StudySessionPage() {
                   <button type="button" className="btn primary" onClick={finishBookSearch}>Found It</button>
                 </div>
               )}
-              {responsePath[question.id] === "book-assisted" && bookSeconds[question.id] !== undefined && (
-                <p className="muted mt-3 text-sm">Book search: {bookSeconds[question.id]} sec</p>
-              )}
-              {responsePath[question.id] !== "book-assisted" && (
-                <p className="muted mt-2 text-sm">Answer normally, or start a timed search in your physical code book.</p>
+              {responsePath[question.id] !== "book-assisted" && !bookStartedAt[question.id] && (
+                <p className="muted mt-3 text-sm">You can answer directly or start a timed code-book search.</p>
               )}
             </div>
           )}
@@ -379,9 +410,11 @@ export default function StudySessionPage() {
                   aria-pressed={on}
                   disabled={Boolean(checked)}
                   onClick={() => void choose(answer.id)}
-                  className={`flex min-h-14 w-full items-start gap-3 rounded-lg border p-4 text-left disabled:cursor-default ${on ? "border-teal-700 bg-teal-50" : "bg-white"} ${checked && correct ? "ring-2 ring-green-600" : ""}`}
+                  className="answer-choice disabled:cursor-default"
+                  data-selected={on}
+                  data-correct={Boolean(checked && correct)}
                 >
-                  <span className="font-bold">{answer.id.toUpperCase()}.</span>
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-slate-300 text-xs font-extrabold">{answer.id.toUpperCase()}</span>
                   <span>
                     <span>{answer.text}</span>
                     {uk && answer.textUk && <span lang="uk" className="mt-1 block text-sm text-slate-600">{answer.textUk}</span>}
@@ -402,7 +435,7 @@ export default function StudySessionPage() {
           )}
 
           {checked && (
-            <div className="mt-5 rounded-lg border bg-slate-50 p-4">
+            <div className={`${checked.correct ? "alert-success" : "alert-danger"} mt-5 p-5`}>
               <p className={`font-bold ${checked.correct ? "text-green-700" : "text-red-700"}`}>
                 {checked.correct ? "✓ Correct" : "✕ Incorrect"}
               </p>
@@ -419,7 +452,7 @@ export default function StudySessionPage() {
 
           {error && <p role="alert" className="mt-4 text-red-700">{error}</p>}
 
-          <div className="mt-7 flex gap-3">
+          <div className="mobile-actionbar flex gap-3">
             <button disabled={currentIndex === 0} onClick={() => move(currentIndex - 1)} className="btn secondary disabled:opacity-40">Previous</button>
             <button
               disabled={currentIndex === session.questions.length - 1}
@@ -431,7 +464,7 @@ export default function StudySessionPage() {
           </div>
         </section>
 
-        <aside className="card self-start">
+        <aside className="card desktop-only self-start lg:sticky lg:top-24">
           <h2 className="font-bold">Question navigator</h2>
           <div className="mt-4 grid grid-cols-5 gap-2">
             {session.questionIds.map((questionId, index) => {
