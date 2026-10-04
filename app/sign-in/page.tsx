@@ -67,6 +67,9 @@ export default function SignInPage() {
           if (claimResponse.ok) {
             window.sessionStorage.removeItem("mnqb:demo-claim");
             if (safeNext === "/platform/dashboard") safeNext = "/platform/dashboard?demo=saved";
+          } else {
+            const claimBody = await claimResponse.json().catch(() => null) as { error?: string } | null;
+            throw new Error(claimBody?.error || "Your email was verified, but the demo result could not be saved. Please try again.");
           }
         }
       }
