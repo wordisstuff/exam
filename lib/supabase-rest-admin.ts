@@ -259,9 +259,12 @@ export async function upsertSessionAnswers(rows: Array<{
   if (!response.ok) throw new Error(messageFromPayload(responsePayload, "Unable to save session answers"));
 }
 
-export async function completeStudySession(sessionId: string, completedAt: string): Promise<void> {
+export async function completeStudySession(sessionId: string, userId: string, completedAt: string): Promise<void> {
   const response = await fetch(
-    restUrl("study_sessions", { id: `eq.${sessionId}` }),
+    restUrl("study_sessions", {
+      id: `eq.${sessionId}`,
+      user_id: `eq.${userId}`,
+    }),
     {
       method: "PATCH",
       headers: {
