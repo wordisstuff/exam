@@ -44,6 +44,12 @@ export async function POST(
     questionTimeSeconds?: unknown;
     flagged?: unknown;
     check?: unknown;
+    responsePath?: unknown;
+    bookSearchStartedAt?: unknown;
+    bookSearchCompletedAt?: unknown;
+    bookSearchSeconds?: unknown;
+    reportedSection?: unknown;
+    indexTerm?: unknown;
   } | null;
 
   if (typeof body?.questionId !== "string" || !session.question_ids.includes(body.questionId)) {
@@ -71,6 +77,27 @@ export async function POST(
   const flagged = typeof body.flagged === "boolean" ? body.flagged : undefined;
   const wantsCheck = body.check === true;
 
+  const responsePath =
+    body.responsePath === "direct" || body.responsePath === "book-assisted"
+      ? body.responsePath
+      : undefined;
+  const bookSearchStartedAt =
+    typeof body.bookSearchStartedAt === "string" ? body.bookSearchStartedAt : undefined;
+  const bookSearchCompletedAt =
+    typeof body.bookSearchCompletedAt === "string" ? body.bookSearchCompletedAt : undefined;
+  const bookSearchSeconds =
+    typeof body.bookSearchSeconds === "number" && Number.isFinite(body.bookSearchSeconds)
+      ? Math.max(0, Math.floor(body.bookSearchSeconds))
+      : undefined;
+  const reportedSection =
+    typeof body.reportedSection === "string" ? body.reportedSection.trim().slice(0, 80) || null : undefined;
+  const indexTerm =
+    typeof body.indexTerm === "string" ? body.indexTerm.trim().slice(0, 120) || null : undefined;
+
+  if (responsePath === "book-assisted" && bookSearchSeconds === undefined && !bookSearchStartedAt) {
+    return NextResponse.json({ error: "Book-assisted responses require book-search timing." }, { status: 400 });
+  }
+
   if (session.feedback_mode === "deferred" && wantsCheck) {
     return NextResponse.json({ error: "Exam Mode does not reveal correctness before finish." }, { status: 403 });
   }
@@ -91,6 +118,12 @@ export async function POST(
         isCorrect: feedback.correct,
         questionTimeSeconds,
         flagged,
+        responsePath,
+        bookSearchStartedAt,
+        bookSearchCompletedAt,
+        bookSearchSeconds,
+        reportedSection,
+        indexTerm,
       });
 
       return NextResponse.json({
@@ -120,6 +153,12 @@ export async function POST(
     selectedAnswerIds: selected,
     questionTimeSeconds,
     flagged,
+    responsePath,
+    bookSearchStartedAt,
+    bookSearchCompletedAt,
+    bookSearchSeconds,
+    reportedSection,
+    indexTerm,
   });
 
   return NextResponse.json({ saved: true, checked: false });
