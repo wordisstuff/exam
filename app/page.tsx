@@ -118,6 +118,35 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="app-shell py-8 md:py-12">
+          <div className="mb-5">
+            <p className="eyebrow">What makes it useful</p>
+            <h2 className="mt-2 text-2xl font-extrabold tracking-tight md:text-3xl">Practice that produces measurable study signals.</h2>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <article className="card">
+              <p className="text-2xl font-extrabold">110</p>
+              <h3 className="mt-2 font-extrabold">Timed exam simulation</h3>
+              <p className="muted mt-2 text-sm leading-6">Run a complete session and get your score only when you finish.</p>
+            </article>
+            <article className="card">
+              <p className="text-2xl font-extrabold">1-by-1</p>
+              <h3 className="mt-2 font-extrabold">Immediate learning feedback</h3>
+              <p className="muted mt-2 text-sm leading-6">See explanations and code references while the question is still fresh.</p>
+            </article>
+            <article className="card">
+              <p className="text-2xl font-extrabold">Timed</p>
+              <h3 className="mt-2 font-extrabold">Code-book search practice</h3>
+              <p className="muted mt-2 text-sm leading-6">Measure how long it takes you to find rules in the physical book.</p>
+            </article>
+            <article className="card">
+              <p className="text-2xl font-extrabold">Personal</p>
+              <h3 className="mt-2 font-extrabold">Weak-area tracking</h3>
+              <p className="muted mt-2 text-sm leading-6">Your graded answers build a focused list of topics to revisit next.</p>
+            </article>
+          </div>
+        </section>
+
         <section className="app-shell py-10 md:py-14">
           <div className="card-elevated grid gap-7 p-7 md:grid-cols-[1fr_auto] md:items-center md:p-9">
             <div>
