@@ -231,7 +231,7 @@ export default function PlatformDashboard() {
       </header>
 
       <div className="app-shell py-7 md:py-10">
-        <section className="flex flex-wrap items-end justify-between gap-5">
+        <section className="dashboard-hero flex flex-wrap items-end justify-between gap-5">
           <div>
             <p className="eyebrow">Study dashboard</p>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">
@@ -384,7 +384,7 @@ export default function PlatformDashboard() {
               </article>
             </section>
 
-            <section className="card mt-7">
+            <section className="card mt-7 border-emerald-100/80">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <p className="eyebrow">Category mastery</p>
@@ -430,7 +430,7 @@ export default function PlatformDashboard() {
           </>
         )}
 
-        <section className="mt-8">
+        <section className="section-band mt-8">
           <div className="mb-4 flex items-end justify-between gap-4">
             <div>
               <p className="eyebrow">Choose your training</p>
