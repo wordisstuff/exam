@@ -25,6 +25,13 @@ export interface WeakArea {
   averageSeconds: number;
 }
 
+export interface MasteryArea {
+  name: string;
+  correct: number;
+  total: number;
+  percentage: number;
+}
+
 export interface BookPracticeTopic {
   name: string;
   searches: number;
@@ -51,6 +58,7 @@ export interface ProgressSummary {
   answered: number;
   history: ProgressHistoryItem[];
   weakAreas: WeakArea[];
+  masteryAreas: MasteryArea[];
   bookPractice: BookPracticeSummary;
   activeSessions: Array<{
     id: string;
@@ -117,6 +125,7 @@ export function buildProgressSummary(
     : 0;
 
   const aggregate = new Map<string, { correct: number; total: number; seconds: number }>();
+  const categoryAggregate = new Map<string, { correct: number; total: number }>();
   for (const session of sessions) {
     if (session.status !== "completed") continue;
     for (const row of answersBySession.get(session.id) ?? []) {
@@ -128,6 +137,11 @@ export function buildProgressSummary(
       current.correct += row.is_correct ? 1 : 0;
       current.seconds += Math.max(0, row.question_time_seconds ?? 0);
       aggregate.set(question.subcategory, current);
+
+      const category = categoryAggregate.get(question.primaryCategory) ?? { correct: 0, total: 0 };
+      category.total += 1;
+      category.correct += row.is_correct ? 1 : 0;
+      categoryAggregate.set(question.primaryCategory, category);
     }
   }
 
@@ -142,6 +156,15 @@ export function buildProgressSummary(
     }))
     .sort((a, b) => a.percentage - b.percentage || b.total - a.total)
     .slice(0, 8);
+
+  const masteryAreas = [...categoryAggregate.entries()]
+    .map(([name, value]) => ({
+      name,
+      correct: value.correct,
+      total: value.total,
+      percentage: value.total ? (value.correct / value.total) * 100 : 0,
+    }))
+    .sort((a, b) => b.total - a.total || b.percentage - a.percentage || a.name.localeCompare(b.name));
 
   const bookPracticeSessionIds = new Set(
     sessions.filter(session => session.mode === "book-practice").map(session => session.id),
@@ -224,6 +247,7 @@ export function buildProgressSummary(
     answered: answers.filter(answer => answer.selected_answer_ids.length > 0).length,
     history,
     weakAreas,
+    masteryAreas,
     bookPractice,
     activeSessions,
   };
