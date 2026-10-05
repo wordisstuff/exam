@@ -47,11 +47,12 @@ export default function PricingPage() {
         </div>
 
         <ul className="mt-6 list-disc space-y-2 pl-5">
-          <li>110-question Full Exam simulation</li>
-          <li>Learning Mode with explanations and references</li>
+          <li>110-question timed Full Exam simulation</li>
+          <li>Learning Mode with immediate explanations and code references</li>
+          <li>Code Book Practice with timed physical-book searches</li>
+          <li>Cross-device progress, study history, and weak-area tracking</li>
+          <li>Personalized next-step recommendations and readiness milestones</li>
           <li>English + Ukrainian content currently available</li>
-          <li>Cross-device history and weak-area analytics</li>
-          <li>Code Book Practice and AI Tutor planned for the full product</li>
         </ul>
 
         <button disabled={busy} onClick={() => void checkout()} className="btn primary mt-7 w-full disabled:opacity-50">
