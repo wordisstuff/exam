@@ -120,7 +120,7 @@ export function buildProgressSummary(
   for (const session of sessions) {
     if (session.status !== "completed") continue;
     for (const row of answersBySession.get(session.id) ?? []) {
-      if (row.is_correct === null) continue;
+      if (!row.selected_answer_ids.length || row.is_correct === null) continue;
       const question = questionById.get(row.question_id);
       if (!question) continue;
       const current = aggregate.get(question.subcategory) ?? { correct: 0, total: 0, seconds: 0 };
