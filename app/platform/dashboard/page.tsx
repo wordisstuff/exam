@@ -23,7 +23,18 @@ interface ProgressSummary {
   averageScore: number;
   bestScore: number;
   answered: number;
+  history: Array<{
+    id: string;
+    status: string;
+    startedAt: string;
+    completedAt: string | null;
+    correct: number;
+    incorrect: number;
+    unanswered: number;
+    total: number;
+  }>;
   weakAreas: Array<{ name: string; correct: number; total: number; percentage: number; averageSeconds: number }>;
+  masteryAreas: Array<{ name: string; correct: number; total: number; percentage: number }>;
   bookPractice: {
     directAnswers: number;
     directCorrect: number;
@@ -160,6 +171,40 @@ export default function PlatformDashboard() {
     { label: "Practice with the code book", done: progress.bookPractice.bookAssistedAnswers >= 5 },
   ] : [];
   const readinessDone = readinessChecks.filter(item => item.done).length;
+
+  const localDayKey = (value: string | Date) => {
+    const date = value instanceof Date ? value : new Date(value);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  };
+  const todayKey = localDayKey(new Date());
+  const answeredToday = progress?.history
+    .filter(item => localDayKey(item.startedAt) === todayKey)
+    .reduce((sum, item) => sum + Math.max(0, item.total - item.unanswered), 0) ?? 0;
+  const dailyTarget = 20;
+  const dailyTargetPercent = Math.min(100, (answeredToday / dailyTarget) * 100);
+
+  const studyDays = progress
+    ? [...new Set(progress.history
+        .filter(item => item.total - item.unanswered > 0)
+        .map(item => localDayKey(item.startedAt)))]
+        .sort((a, b) => b.localeCompare(a))
+    : [];
+  let studyStreak = 0;
+  if (studyDays.length) {
+    const cursor = new Date();
+    const latest = studyDays[0];
+    const yesterday = new Date(cursor);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (latest === localDayKey(cursor) || latest === localDayKey(yesterday)) {
+      const daySet = new Set(studyDays);
+      const streakCursor = latest === localDayKey(cursor) ? new Date(cursor) : new Date(yesterday);
+      while (daySet.has(localDayKey(streakCursor))) {
+        studyStreak += 1;
+        streakCursor.setDate(streakCursor.getDate() - 1);
+      }
+    }
+  }
+
   const recommendedNext = !progress
     ? null
     : firstActive
@@ -290,24 +335,99 @@ export default function PlatformDashboard() {
         )}
 
         {progress && (
-          <section className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <div className="metric">
-              <p className="muted text-xs font-bold uppercase tracking-wider">Completed</p>
-              <p className="mt-2 text-2xl font-extrabold">{progress.completed}</p>
-            </div>
-            <div className="metric">
-              <p className="muted text-xs font-bold uppercase tracking-wider">Average score</p>
-              <p className="mt-2 text-2xl font-extrabold">{progress.averageScore.toFixed(1)}%</p>
-            </div>
-            <div className="metric">
-              <p className="muted text-xs font-bold uppercase tracking-wider">Best score</p>
-              <p className="mt-2 text-2xl font-extrabold">{progress.bestScore.toFixed(1)}%</p>
-            </div>
-            <div className="metric">
-              <p className="muted text-xs font-bold uppercase tracking-wider">Answered</p>
-              <p className="mt-2 text-2xl font-extrabold">{progress.answered}</p>
-            </div>
-          </section>
+          <>
+            <section className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+              <div className="metric">
+                <p className="muted text-xs font-bold uppercase tracking-wider">Completed</p>
+                <p className="mt-2 text-2xl font-extrabold">{progress.completed}</p>
+              </div>
+              <div className="metric">
+                <p className="muted text-xs font-bold uppercase tracking-wider">Average score</p>
+                <p className="mt-2 text-2xl font-extrabold">{progress.averageScore.toFixed(1)}%</p>
+              </div>
+              <div className="metric">
+                <p className="muted text-xs font-bold uppercase tracking-wider">Best score</p>
+                <p className="mt-2 text-2xl font-extrabold">{progress.bestScore.toFixed(1)}%</p>
+              </div>
+              <div className="metric">
+                <p className="muted text-xs font-bold uppercase tracking-wider">Answered</p>
+                <p className="mt-2 text-2xl font-extrabold">{progress.answered}</p>
+              </div>
+            </section>
+
+            <section className="mt-4 grid gap-4 md:grid-cols-2">
+              <article className="card p-5">
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <p className="eyebrow">Daily study target</p>
+                    <h2 className="mt-2 text-xl font-extrabold">{answeredToday}/{dailyTarget} questions today</h2>
+                  </div>
+                  <span className="tag">{Math.round(dailyTargetPercent)}%</span>
+                </div>
+                <div className="progress-track mt-4">
+                  <div className="progress-fill" style={{ width: `${Math.max(4, dailyTargetPercent)}%` }} />
+                </div>
+                <p className="muted mt-3 text-xs">
+                  {answeredToday >= dailyTarget ? "Daily target complete. Keep the momentum if you want more practice." : `${dailyTarget - answeredToday} more questions to hit today’s target.`}
+                </p>
+              </article>
+
+              <article className="card p-5">
+                <p className="eyebrow">Study streak</p>
+                <div className="mt-2 flex items-end gap-3">
+                  <p className="text-3xl font-extrabold">{studyStreak}</p>
+                  <p className="muted pb-1 text-sm">{studyStreak === 1 ? "day" : "days"} in a row</p>
+                </div>
+                <p className="muted mt-3 text-sm">
+                  {studyStreak > 0 ? "A study day counts when you answer at least one question." : "Answer a question today to start your streak."}
+                </p>
+              </article>
+            </section>
+
+            <section className="card mt-7">
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <p className="eyebrow">Category mastery</p>
+                  <h2 className="mt-1 text-xl font-extrabold tracking-tight">Mastery map</h2>
+                </div>
+                <span className="muted text-sm">Based only on graded answers</span>
+              </div>
+
+              {progress.masteryAreas.length ? (
+                <div className="mt-5 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                  {progress.masteryAreas.map(area => {
+                    const label = area.total >= 5 && area.percentage >= 80
+                      ? "Strong"
+                      : area.percentage >= 60
+                        ? "Building"
+                        : "Needs practice";
+                    return (
+                      <div key={area.name} className="soft-panel p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <strong>{area.name}</strong>
+                            <p className="muted mt-1 text-xs">{area.correct}/{area.total} correct</p>
+                          </div>
+                          <span className="tag">{label}</span>
+                        </div>
+                        <div className="mt-4 flex items-end justify-between gap-3">
+                          <div className="progress-track flex-1">
+                            <div className="progress-fill" style={{ width: `${Math.max(4, Math.min(100, area.percentage))}%` }} />
+                          </div>
+                          <span className="font-extrabold">{area.percentage.toFixed(0)}%</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="soft-panel mt-5 p-5">
+                  <p className="font-bold">Your mastery map will build as you study</p>
+                  <p className="muted mt-1 text-sm">Complete graded questions to see category-level accuracy here.</p>
+                </div>
+              )}
+            </section>
+          </>
         )}
 
         <section className="mt-8">
