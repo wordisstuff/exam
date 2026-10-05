@@ -19,8 +19,8 @@ export default function Home() {
           </div>
         </header>
 
-        <section className="app-shell py-14 md:py-20">
-          <div className="grid items-center gap-10 lg:grid-cols-[1.08fr_.92fr]">
+        <section className="app-shell py-10 md:py-16">
+          <div className="hero-surface grid items-center gap-10 p-6 md:p-10 lg:grid-cols-[1.08fr_.92fr]">
             <div>
               <p className="eyebrow">Minnesota Qualifying Builder prep</p>
               <h1 className="page-title mt-4 max-w-3xl">
@@ -46,7 +46,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="card-elevated overflow-hidden p-4 md:p-6">
+            <div className="glass-panel relative z-10 overflow-hidden rounded-3xl p-4 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="eyebrow">Product preview</p>
@@ -124,22 +124,22 @@ export default function Home() {
             <h2 className="mt-2 text-2xl font-extrabold tracking-tight md:text-3xl">Practice that produces measurable study signals.</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <article className="card">
+            <article className="card feature-card">
               <p className="text-2xl font-extrabold">110</p>
               <h3 className="mt-2 font-extrabold">Timed exam simulation</h3>
               <p className="muted mt-2 text-sm leading-6">Run a complete session and get your score only when you finish.</p>
             </article>
-            <article className="card">
+            <article className="card feature-card">
               <p className="text-2xl font-extrabold">1-by-1</p>
               <h3 className="mt-2 font-extrabold">Immediate learning feedback</h3>
               <p className="muted mt-2 text-sm leading-6">See explanations and code references while the question is still fresh.</p>
             </article>
-            <article className="card">
+            <article className="card feature-card">
               <p className="text-2xl font-extrabold">Timed</p>
               <h3 className="mt-2 font-extrabold">Code-book search practice</h3>
               <p className="muted mt-2 text-sm leading-6">Measure how long it takes you to find rules in the physical book.</p>
             </article>
-            <article className="card">
+            <article className="card feature-card">
               <p className="text-2xl font-extrabold">Personal</p>
               <h3 className="mt-2 font-extrabold">Weak-area tracking</h3>
               <p className="muted mt-2 text-sm leading-6">Your graded answers build a focused list of topics to revisit next.</p>
