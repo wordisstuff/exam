@@ -153,6 +153,22 @@ export default function PlatformDashboard() {
   if (!user) return null;
 
   const firstActive = progress?.activeSessions[0] ?? null;
+  const readinessChecks = progress ? [
+    { label: "Complete a study session", done: progress.completed >= 1 },
+    { label: "Answer at least 50 graded questions", done: progress.answered >= 50 },
+    { label: "Reach 70%+ on a completed session", done: progress.bestScore >= 70 },
+    { label: "Practice with the code book", done: progress.bookPractice.bookAssistedAnswers >= 5 },
+  ] : [];
+  const readinessDone = readinessChecks.filter(item => item.done).length;
+  const recommendedNext = !progress
+    ? null
+    : firstActive
+      ? { title: "Continue your active session", detail: `${firstActive.answered} of ${firstActive.total} answered`, action: "Continue", href: `/study/${firstActive.id}` }
+      : progress.weakAreas[0]
+        ? { title: `Focus on ${progress.weakAreas[0].name}`, detail: `${progress.weakAreas[0].percentage.toFixed(0)}% accuracy from graded answers`, action: "Open history", href: "/platform/history" }
+        : progress.bookPractice.bookAssistedAnswers < 5
+          ? { title: "Build code-book speed", detail: "Use Code Book Practice to measure search time and accuracy.", action: "Start practice", href: "#code-book-practice" }
+          : { title: "Run a full exam", detail: "Use a 110-question timed session to measure your current score.", action: "Start exam", href: "#full-exam" };
 
   return (
     <main className="min-h-screen">
@@ -232,6 +248,47 @@ export default function PlatformDashboard() {
           </section>
         )}
 
+        {progress && recommendedNext && (
+          <section className="mt-7 grid gap-4 lg:grid-cols-[1.15fr_.85fr]">
+            <article className="card-elevated p-6 md:p-7">
+              <p className="eyebrow">Recommended next move</p>
+              <h2 className="mt-2 text-2xl font-extrabold tracking-tight">{recommendedNext.title}</h2>
+              <p className="muted mt-2">{recommendedNext.detail}</p>
+              <button
+                className="btn primary mt-5"
+                onClick={() => {
+                  if (recommendedNext.href.startsWith("#")) {
+                    document.querySelector(recommendedNext.href)?.scrollIntoView({ behavior: "smooth" });
+                  } else {
+                    router.push(recommendedNext.href);
+                  }
+                }}
+              >
+                {recommendedNext.action}
+              </button>
+            </article>
+
+            <article className="card p-6">
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <p className="eyebrow">Study readiness</p>
+                  <h2 className="mt-2 text-xl font-extrabold tracking-tight">{readinessDone}/4 milestones</h2>
+                </div>
+                <span className="tag">{Math.round((readinessDone / Math.max(readinessChecks.length, 1)) * 100)}%</span>
+              </div>
+              <div className="mt-4 grid gap-2">
+                {readinessChecks.map(item => (
+                  <div key={item.label} className="soft-panel flex items-center gap-3 p-3 text-sm">
+                    <span aria-hidden="true">{item.done ? "✓" : "○"}</span>
+                    <span className={item.done ? "font-bold" : "muted"}>{item.label}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="muted mt-3 text-xs">A progress checklist, not a prediction of exam results.</p>
+            </article>
+          </section>
+        )}
+
         {progress && (
           <section className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
             <div className="metric">
@@ -262,7 +319,7 @@ export default function PlatformDashboard() {
           </div>
 
           <div className="grid gap-4 lg:grid-cols-3">
-            <article className="card mode-card flex flex-col">
+            <article id="full-exam" className="card mode-card flex flex-col">
               <span className="tag self-start">Exam simulation</span>
               <h3 className="section-title mt-4">Full Exam</h3>
               <p className="muted mt-3 flex-1 leading-6">110 questions · 5h 30m · results revealed when you finish.</p>
@@ -288,7 +345,7 @@ export default function PlatformDashboard() {
               </button>
             </article>
 
-            <article className="card mode-card flex flex-col">
+            <article id="code-book-practice" className="card mode-card flex flex-col">
               <span className="tag self-start">Navigation skill</span>
               <h3 className="section-title mt-4">Code Book Practice</h3>
               <p className="muted mt-3 flex-1 leading-6">20 questions built around finding the rule efficiently in your physical code book.</p>
