@@ -33,4 +33,5 @@ import{lifeSafetyQuestions}from"./questions-life-safety.ts";
 import{energyQuestions}from"./questions-energy.ts";
 import{foundationQuestions}from"./questions-foundations.ts";
 import{carpentryQuestions}from"./questions-carpentry.ts";
-export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions,...carpentryQuestions];
+import{intakeVerified01}from"./questions-intake-verified-01.ts";
+export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions,...carpentryQuestions,...intakeVerified01];
