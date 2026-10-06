@@ -44,4 +44,5 @@ import{intakeVerified08}from"./questions-intake-verified-08.ts";
 import{intakeVerified09}from"./questions-intake-verified-09.ts";
 import{intakeVerified10}from"./questions-intake-verified-10.ts";
 import{intakeVerified11}from"./questions-intake-verified-11.ts";
-export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions,...carpentryQuestions,...intakeVerified01,...intakeVerified02,...intakeVerified03,...intakeVerified04,...intakeVerified05,...intakeVerified06,...intakeVerified07,...intakeVerified08,...intakeVerified09,...intakeVerified10,...intakeVerified11];
+import{intakeVerified12}from"./questions-intake-verified-12.ts";
+export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions,...carpentryQuestions,...intakeVerified01,...intakeVerified02,...intakeVerified03,...intakeVerified04,...intakeVerified05,...intakeVerified06,...intakeVerified07,...intakeVerified08,...intakeVerified09,...intakeVerified10,...intakeVerified11,...intakeVerified12];
