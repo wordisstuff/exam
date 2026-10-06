@@ -37,4 +37,5 @@ import{intakeVerified01}from"./questions-intake-verified-01.ts";
 import{intakeVerified02}from"./questions-intake-verified-02.ts";
 import{intakeVerified03}from"./questions-intake-verified-03.ts";
 import{intakeVerified04}from"./questions-intake-verified-04.ts";
-export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions,...carpentryQuestions,...intakeVerified01,...intakeVerified02,...intakeVerified03,...intakeVerified04];
+import{intakeVerified05}from"./questions-intake-verified-05.ts";
+export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions,...carpentryQuestions,...intakeVerified01,...intakeVerified02,...intakeVerified03,...intakeVerified04,...intakeVerified05];
