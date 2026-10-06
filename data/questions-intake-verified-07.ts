@@ -282,7 +282,7 @@ q({
   id:"intake-verified-080",
   primaryCategory:"Carpentry",
   subcategory:"Floor Joists",
-  difficulty:"multiple",
+  difficulty:"exam",
   type:"multiple",
   question:"Which THREE spacing rules apply to a bored hole in a solid-sawn floor joist under IRC R502.8.1?",
   questionUk:"Які ТРИ правила щодо відстаней застосовуються до bored hole у solid-sawn floor joist за IRC R502.8.1?",
