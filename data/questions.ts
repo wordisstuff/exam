@@ -1,3 +1,10 @@
+import{intakeVerified18}from"./questions-intake-verified-18.ts";
+import{intakeVerified17}from"./questions-intake-verified-17.ts";
+import{intakeVerified16}from"./questions-intake-verified-16.ts";
+import{intakeVerified15b}from"./questions-intake-verified-15b.ts";
+import{intakeVerified15a}from"./questions-intake-verified-15a.ts";
+import{intakeVerified14}from"./questions-intake-verified-14.ts";
+import{intakeVerified13}from"./questions-intake-verified-13.ts";
 import type{Question,PrimaryCategory}from"../lib/types.ts";
 type Seed=[PrimaryCategory,string,string,string,string[],number[],string,string[],string[]];
 const seeds:Seed[]=[
@@ -45,4 +52,4 @@ import{intakeVerified09}from"./questions-intake-verified-09.ts";
 import{intakeVerified10}from"./questions-intake-verified-10.ts";
 import{intakeVerified11}from"./questions-intake-verified-11.ts";
 import{intakeVerified12}from"./questions-intake-verified-12.ts";
-export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions,...carpentryQuestions,...intakeVerified01,...intakeVerified02,...intakeVerified03,...intakeVerified04,...intakeVerified05,...intakeVerified06,...intakeVerified07,...intakeVerified08,...intakeVerified09,...intakeVerified10,...intakeVerified11,...intakeVerified12];
+export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions,...carpentryQuestions,...intakeVerified01,...intakeVerified02,...intakeVerified03,...intakeVerified04,...intakeVerified05,...intakeVerified06,...intakeVerified07,...intakeVerified08,...intakeVerified09,...intakeVerified10,...intakeVerified11,...intakeVerified12...intakeVerified13,...intakeVerified14,...intakeVerified15a,...intakeVerified15b,...intakeVerified16,...intakeVerified17,...intakeVerified18];
