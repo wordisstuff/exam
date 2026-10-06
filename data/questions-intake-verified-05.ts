@@ -82,7 +82,7 @@ q({
   id:"intake-verified-048",
   primaryCategory:"Building Planning / Life Safety",
   subcategory:"Dwelling / Garage Separation",
-  difficulty:"multiple",
+  difficulty:"exam",
   type:"multiple",
   question:"Which THREE doors are permitted by Minnesota R302.5.1 for an opening between a private garage and the residence, assuming the opening does not lead directly into a sleeping room?",
   questionUk:"Які ТРИ типи дверей дозволяє Minnesota R302.5.1 для отвору між приватним гаражем і житловою частиною, якщо отвір не веде безпосередньо в спальню?",
