@@ -3,6 +3,7 @@ import test from "node:test";
 import { questions } from "../data/questions.ts";
 import { EXAM_CONFIG, QUESTION_BANK_VERSION } from "../lib/config.ts";
 import { BOOK_PRACTICE_QUESTION_COUNT, buildBookPracticeSession, buildServerFullExamSession } from "../lib/server-session.ts";
+import { isCodeBookSearchable } from "../lib/question-source.ts";
 
 test("server Full Exam draft contains exactly 110 unique learner-safe questions", () => {
   let n = 0;
@@ -62,4 +63,17 @@ test("Code Book Practice creates a 20-question immediate-feedback session withou
   assert.equal(draft.questionIds.length, BOOK_PRACTICE_QUESTION_COUNT);
   assert.equal(new Set(draft.questionIds).size, BOOK_PRACTICE_QUESTION_COUNT);
   assert.equal(draft.questions.length, BOOK_PRACTICE_QUESTION_COUNT);
+});
+
+
+test("Code Book Practice uses only Minnesota code-book-searchable questions", () => {
+  const byId = new Map(questions.map(question => [question.id, question]));
+  const draft = buildBookPracticeSession(questions, new Date(0), () => "book", () => 0.37);
+
+  for (const id of draft.questionIds) {
+    const question = byId.get(id);
+    assert.ok(question);
+    assert.equal(isCodeBookSearchable(question), true);
+    assert.ok(question.reference?.section);
+  }
 });
