@@ -1,3 +1,9 @@
+import{intakeVerified42}from"./questions-intake-verified-42.ts";
+import{intakeVerified41}from"./questions-intake-verified-41.ts";
+import{intakeVerified40}from"./questions-intake-verified-40.ts";
+import{intakeVerified39}from"./questions-intake-verified-39.ts";
+import{intakeVerified38}from"./questions-intake-verified-38.ts";
+import{intakeVerified37}from"./questions-intake-verified-37.ts";
 import{intakeVerified36}from"./questions-intake-verified-36.ts";
 import{intakeVerified35}from"./questions-intake-verified-35.ts";
 import{intakeVerified34}from"./questions-intake-verified-34.ts";
@@ -70,4 +76,4 @@ import{intakeVerified09}from"./questions-intake-verified-09.ts";
 import{intakeVerified10}from"./questions-intake-verified-10.ts";
 import{intakeVerified11}from"./questions-intake-verified-11.ts";
 import{intakeVerified12}from"./questions-intake-verified-12.ts";
-export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions,...carpentryQuestions,...intakeVerified01,...intakeVerified02,...intakeVerified03,...intakeVerified04,...intakeVerified05,...intakeVerified06,...intakeVerified07,...intakeVerified08,...intakeVerified09,...intakeVerified10,...intakeVerified11,...intakeVerified12,...intakeVerified13,...intakeVerified14,...intakeVerified15a,...intakeVerified15b,...intakeVerified16,...intakeVerified17,...intakeVerified18,...intakeVerified19,...intakeVerified20,...intakeVerified21,...intakeVerified22,...intakeVerified23,...intakeVerified24,...intakeVerified25,...intakeVerified26,...intakeVerified27,...intakeVerified28,...intakeVerified29,...intakeVerified30,...intakeVerified31,...intakeVerified32,...intakeVerified33,...intakeVerified34,...intakeVerified35,...intakeVerified36];
+export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions,...carpentryQuestions,...intakeVerified01,...intakeVerified02,...intakeVerified03,...intakeVerified04,...intakeVerified05,...intakeVerified06,...intakeVerified07,...intakeVerified08,...intakeVerified09,...intakeVerified10,...intakeVerified11,...intakeVerified12,...intakeVerified13,...intakeVerified14,...intakeVerified15a,...intakeVerified15b,...intakeVerified16,...intakeVerified17,...intakeVerified18,...intakeVerified19,...intakeVerified20,...intakeVerified21,...intakeVerified22,...intakeVerified23,...intakeVerified24,...intakeVerified25,...intakeVerified26,...intakeVerified27,...intakeVerified28,...intakeVerified29,...intakeVerified30,...intakeVerified31,...intakeVerified32,...intakeVerified33,...intakeVerified34,...intakeVerified35,...intakeVerified36,...intakeVerified37,...intakeVerified38,...intakeVerified39,...intakeVerified40,...intakeVerified41,...intakeVerified42];
