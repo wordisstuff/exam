@@ -1,3 +1,9 @@
+import{intakeVerified24}from"./questions-intake-verified-24.ts";
+import{intakeVerified23}from"./questions-intake-verified-23.ts";
+import{intakeVerified22}from"./questions-intake-verified-22.ts";
+import{intakeVerified21}from"./questions-intake-verified-21.ts";
+import{intakeVerified20}from"./questions-intake-verified-20.ts";
+import{intakeVerified19}from"./questions-intake-verified-19.ts";
 import{intakeVerified18}from"./questions-intake-verified-18.ts";
 import{intakeVerified17}from"./questions-intake-verified-17.ts";
 import{intakeVerified16}from"./questions-intake-verified-16.ts";
@@ -52,4 +58,4 @@ import{intakeVerified09}from"./questions-intake-verified-09.ts";
 import{intakeVerified10}from"./questions-intake-verified-10.ts";
 import{intakeVerified11}from"./questions-intake-verified-11.ts";
 import{intakeVerified12}from"./questions-intake-verified-12.ts";
-export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions,...carpentryQuestions,...intakeVerified01,...intakeVerified02,...intakeVerified03,...intakeVerified04,...intakeVerified05,...intakeVerified06,...intakeVerified07,...intakeVerified08,...intakeVerified09,...intakeVerified10,...intakeVerified11,...intakeVerified12,...intakeVerified13,...intakeVerified14,...intakeVerified15a,...intakeVerified15b,...intakeVerified16,...intakeVerified17,...intakeVerified18];
+export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions,...carpentryQuestions,...intakeVerified01,...intakeVerified02,...intakeVerified03,...intakeVerified04,...intakeVerified05,...intakeVerified06,...intakeVerified07,...intakeVerified08,...intakeVerified09,...intakeVerified10,...intakeVerified11,...intakeVerified12,...intakeVerified13,...intakeVerified14,...intakeVerified15a,...intakeVerified15b,...intakeVerified16,...intakeVerified17,...intakeVerified18,...intakeVerified19,...intakeVerified20,...intakeVerified21,...intakeVerified22,...intakeVerified23,...intakeVerified24];
