@@ -1,3 +1,9 @@
+import{intakeVerified36}from"./questions-intake-verified-36.ts";
+import{intakeVerified35}from"./questions-intake-verified-35.ts";
+import{intakeVerified34}from"./questions-intake-verified-34.ts";
+import{intakeVerified33}from"./questions-intake-verified-33.ts";
+import{intakeVerified32}from"./questions-intake-verified-32.ts";
+import{intakeVerified31}from"./questions-intake-verified-31.ts";
 import{intakeVerified30}from"./questions-intake-verified-30.ts";
 import{intakeVerified29}from"./questions-intake-verified-29.ts";
 import{intakeVerified28}from"./questions-intake-verified-28.ts";
@@ -64,4 +70,4 @@ import{intakeVerified09}from"./questions-intake-verified-09.ts";
 import{intakeVerified10}from"./questions-intake-verified-10.ts";
 import{intakeVerified11}from"./questions-intake-verified-11.ts";
 import{intakeVerified12}from"./questions-intake-verified-12.ts";
-export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions,...carpentryQuestions,...intakeVerified01,...intakeVerified02,...intakeVerified03,...intakeVerified04,...intakeVerified05,...intakeVerified06,...intakeVerified07,...intakeVerified08,...intakeVerified09,...intakeVerified10,...intakeVerified11,...intakeVerified12,...intakeVerified13,...intakeVerified14,...intakeVerified15a,...intakeVerified15b,...intakeVerified16,...intakeVerified17,...intakeVerified18,...intakeVerified19,...intakeVerified20,...intakeVerified21,...intakeVerified22,...intakeVerified23,...intakeVerified24,...intakeVerified25,...intakeVerified26,...intakeVerified27,...intakeVerified28,...intakeVerified29,...intakeVerified30];
+export const questions:Question[]=[...sampleQuestions,...lifeSafetyQuestions,...energyQuestions,...foundationQuestions,...carpentryQuestions,...intakeVerified01,...intakeVerified02,...intakeVerified03,...intakeVerified04,...intakeVerified05,...intakeVerified06,...intakeVerified07,...intakeVerified08,...intakeVerified09,...intakeVerified10,...intakeVerified11,...intakeVerified12,...intakeVerified13,...intakeVerified14,...intakeVerified15a,...intakeVerified15b,...intakeVerified16,...intakeVerified17,...intakeVerified18,...intakeVerified19,...intakeVerified20,...intakeVerified21,...intakeVerified22,...intakeVerified23,...intakeVerified24,...intakeVerified25,...intakeVerified26,...intakeVerified27,...intakeVerified28,...intakeVerified29,...intakeVerified30,...intakeVerified31,...intakeVerified32,...intakeVerified33,...intakeVerified34,...intakeVerified35,...intakeVerified36];
