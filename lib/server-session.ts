@@ -2,6 +2,7 @@ import { EXAM_CONFIG, QUESTION_BANK_VERSION } from "./config.ts";
 import { shuffledUnique } from "./engine.ts";
 import { fullExamEligibleQuestions } from "./question-validation.ts";
 import { toLearnerQuestion, type LearnerQuestion } from "./question-projection.ts";
+import { isCodeBookSearchable } from "./question-source.ts";
 import type { FeedbackMode, Question } from "./types.ts";
 
 export const BOOK_PRACTICE_QUESTION_COUNT = 20;
@@ -61,7 +62,7 @@ export function buildBookPracticeSession(
   idFactory: () => string = () => crypto.randomUUID(),
   rng: () => number = Math.random,
 ): ServerStudySessionDraft {
-  const eligible = eligibleUnique(bank);
+  const eligible = eligibleUnique(bank).filter(isCodeBookSearchable);
   const count = Math.min(BOOK_PRACTICE_QUESTION_COUNT, eligible.length);
 
   if (count === 0) {
