@@ -10,6 +10,7 @@ export interface VerifiedSeed {
   explanation: string;
   explanationUk: string;
   section: string;
+  sourceUrl?: string;
   difficulty: Difficulty;
 }
 
@@ -32,7 +33,7 @@ export function verifiedBatch(start: number, category: PrimaryCategory, subcateg
         text: seed.answers[originalIndex][0], textUk: seed.answers[originalIndex][1] })),
       correctAnswers, ...(seed.correct.length > 1 ? { requiredSelections: seed.correct.length } : {}),
       explanation: seed.explanation, explanationUk: seed.explanationUk,
-      reference: { source, section: seed.section, note: `Primary source checked 2026-10-13: ${url}. Not designated for Minnesota Residential Code Book Practice.` },
+      reference: { source, section: seed.section, note: `Primary source checked 2026-10-13: ${seed.sourceUrl ?? url}. Not designated for Minnesota Residential Code Book Practice.` },
       sourceType, bookSearchable: false,
       tags: ["original-reviewed", "independent-primary-source", seriesTag],
       languageTags: seed.correct.length > 1 ? ["select"] : [],

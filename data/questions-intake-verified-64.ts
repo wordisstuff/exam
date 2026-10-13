@@ -39,4 +39,4 @@ const seeds: VerifiedSeed[] = [
 ];
 export const intakeVerified64 = verifiedBatch(753, "Job Site Safety", "Job Site Safety",
   "OSHA — 29 CFR 1926.303 and 1926.304, Abrasive and woodworking tools", "osha",
-  "https://www.osha.gov/laws-regs/regulations/standardnumber/1926/1926.303", seeds, "intake-series-61-66");
+  "https://www.osha.gov/laws-regs/regulations/standardnumber/1926/1926.303", seeds.map(seed => seed.section.startsWith("1926.304") ? { ...seed, sourceUrl: "https://www.osha.gov/laws-regs/regulations/standardnumber/1926/1926.304" } : seed), "intake-series-61-66");
