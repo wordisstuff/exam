@@ -3,6 +3,12 @@ export type EditorialStatus="sample"|"draft"|"reviewed"; export type Verificatio
 export type PrimaryCategory="Plans and Specifications"|"Energy Code"|"Building Planning / Life Safety"|"Sitework"|"Footings and Foundations"|"Carpentry"|"Roofing"|"Exterior Finishes"|"Foam Plastic Insulation"|"Interior Finishes"|"Associated Issues"|"Job Site Safety"|"Minnesota Contractor Law / Business";
 export interface QuestionReference{source:string;section?:string;subsection?:string;title?:string;note?:string}
 export interface Question{ id:string;primaryCategory:PrimaryCategory;subcategory:string;difficulty:Difficulty;type:QuestionType;question:string;questionUk:string;answers:{id:string;text:string;textUk?:string}[];correctAnswers:string[];requiredSelections?:number;explanation:string;explanationUk?:string;reference?:QuestionReference;tags:string[];languageTags:string[];skills:string[];editorialStatus:EditorialStatus;verificationStatus:VerificationStatus }
+/** Explicit provenance for new intake records; absent on legacy records. */
+export interface Question {
+  sourceType?: "mn-code-book" | "mn-energy-code" | "mn-rule" | "mn-statute" | "osha" | "federal";
+  bookSearchable?: boolean;
+  bookReference?: string;
+}
 export type SessionMode="full-exam"|"quick-test"|"category-practice";
 export type FeedbackMode="deferred"|"immediate";
 export interface Session{id:string;questionBankVersion:number;mode:SessionMode;feedbackMode:FeedbackMode;startedAt:number;completedAt?:number;timeLimitSeconds?:number;questionIds:string[];currentIndex:number;selectedAnswers:Record<string,string[]>;flaggedQuestionIds:string[];questionTimeSeconds:Record<string,number>;activeQuestionEnteredAt:number;checkedQuestionIds:string[]}
