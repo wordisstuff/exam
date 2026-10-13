@@ -11,7 +11,9 @@ const files = fs.readdirSync(new URL("../data/", import.meta.url))
 
 test("new intake batches validate without relaxing legacy validation", () => {
   assert.equal(added.length, files.length * 12);
-  assert.ok(added.length >= 12 && added.length <= 72);
+  assert.equal(added.length, 72);
+  assert.equal(files.length, 6);
+  assert.deepEqual(added.map(q => q.id), Array.from({ length: 72 }, (_, i) => `intake-verified-${645 + i}`));
   assert.deepEqual(validateQuestionBank(added), []);
   assert.ok(added.every(isFullExamEligible));
 });

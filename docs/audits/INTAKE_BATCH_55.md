@@ -16,3 +16,5 @@ Verified 2026-10-13 against the current official text of [Minnesota Rules 1300.0
 | 656 | subp. 6(B) | Professional-authored documents: deficiencies itemized by letter only. |
 
 Read subparts 1–9 including document-waiver, site-plan-waiver and phased/deferred conditions. No earlier question referenced this part in the checked 644-question intake bank. Five independently authored options, substantive Ukrainian localization, one two-selection item, rotated option order. No blue-book search claim: sourceType mn-rule, bookSearchable false; no R-section inferred.
+
+Final six-batch editorial pass replaced weak administrative distractors with relevant submission, approval and document-retention misconceptions. Correct rules and answer indices did not change.
