@@ -17,7 +17,7 @@ export interface VerifiedSeed {
 /** Shared serialization only. Verification is recorded in each batch's audit. */
 export function verifiedBatch(start: number, category: PrimaryCategory, subcategory: string,
   source: string, sourceType: Question["sourceType"], url: string, seeds: VerifiedSeed[],
-  seriesTag = "intake-2026-10-13"): Question[] {
+  seriesTag = "intake-2026-10-13", bookSearchable = false): Question[] {
   return seeds.map((seed, index) => {
     // Rotate independently authored options to avoid a fixed correct-answer position.
     const rotation = index % seed.answers.length;
@@ -33,8 +33,8 @@ export function verifiedBatch(start: number, category: PrimaryCategory, subcateg
         text: seed.answers[originalIndex][0], textUk: seed.answers[originalIndex][1] })),
       correctAnswers, ...(seed.correct.length > 1 ? { requiredSelections: seed.correct.length } : {}),
       explanation: seed.explanation, explanationUk: seed.explanationUk,
-      reference: { source, section: seed.section, note: `Primary source checked 2026-10-13: ${seed.sourceUrl ?? url}. Not designated for Minnesota Residential Code Book Practice.` },
-      sourceType, bookSearchable: false,
+      reference: { source, section: seed.section, note: `Primary source checked 2026-10-13: ${seed.sourceUrl ?? url}.${bookSearchable ? " Minnesota amendments checked; answer is in the adopted residential code." : " Not designated for Minnesota Residential Code Book Practice."}` },
+      sourceType, bookSearchable, ...(bookSearchable ? { bookReference: seed.section } : {}),
       tags: ["original-reviewed", "independent-primary-source", seriesTag],
       languageTags: seed.correct.length > 1 ? ["select"] : [],
       skills: [(seed.subcategory ?? subcategory).toLowerCase(), "source application"],
