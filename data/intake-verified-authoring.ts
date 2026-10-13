@@ -15,7 +15,8 @@ export interface VerifiedSeed {
 
 /** Shared serialization only. Verification is recorded in each batch's audit. */
 export function verifiedBatch(start: number, category: PrimaryCategory, subcategory: string,
-  source: string, sourceType: Question["sourceType"], url: string, seeds: VerifiedSeed[]): Question[] {
+  source: string, sourceType: Question["sourceType"], url: string, seeds: VerifiedSeed[],
+  seriesTag = "intake-2026-10-13"): Question[] {
   return seeds.map((seed, index) => {
     // Rotate independently authored options to avoid a fixed correct-answer position.
     const rotation = index % seed.answers.length;
@@ -33,9 +34,9 @@ export function verifiedBatch(start: number, category: PrimaryCategory, subcateg
       explanation: seed.explanation, explanationUk: seed.explanationUk,
       reference: { source, section: seed.section, note: `Primary source checked 2026-10-13: ${url}. Not designated for Minnesota Residential Code Book Practice.` },
       sourceType, bookSearchable: false,
-      tags: ["original-reviewed", "independent-primary-source", "intake-2026-10-13"],
+      tags: ["original-reviewed", "independent-primary-source", seriesTag],
       languageTags: seed.correct.length > 1 ? ["select"] : [],
-      skills: [subcategory.toLowerCase(), "source application"],
+      skills: [(seed.subcategory ?? subcategory).toLowerCase(), "source application"],
       editorialStatus: "reviewed", verificationStatus: "source-checked",
     };
   });
