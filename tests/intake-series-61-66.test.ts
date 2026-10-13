@@ -9,6 +9,8 @@ const count = fs.readdirSync(new URL("../data/", import.meta.url))
   .filter(name => /^questions-intake-verified-(61|62|63|64|65|66)\.ts$/.test(name)).length;
 test("series 61–66 validates and remains Full Exam eligible", () => {
   assert.equal(added.length, count * 12);
+  assert.equal(count, 6);
+  assert.equal(added.length, 72);
   assert.deepEqual(added.map(q => q.id), Array.from({ length: count * 12 }, (_, i) => `intake-verified-${717 + i}`));
   assert.deepEqual(validateQuestionBank(added), []);
   assert.ok(added.every(isFullExamEligible));
