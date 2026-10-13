@@ -1,6 +1,8 @@
 import type { Difficulty, PrimaryCategory, Question } from "../lib/types.ts";
 
 export interface VerifiedSeed {
+  primaryCategory?: PrimaryCategory;
+  subcategory?: string;
   question: string;
   questionUk: string;
   answers: [string, string][];
@@ -21,7 +23,8 @@ export function verifiedBatch(start: number, category: PrimaryCategory, subcateg
     const correctAnswers = order.flatMap((originalIndex, i) =>
       seed.correct.includes(originalIndex) ? [String.fromCharCode(97 + i)] : []);
     return {
-      id: `intake-verified-${start + index}`, primaryCategory: category, subcategory,
+      id: `intake-verified-${start + index}`, primaryCategory: seed.primaryCategory ?? category,
+      subcategory: seed.subcategory ?? subcategory,
       difficulty: seed.difficulty, type: seed.correct.length > 1 ? "multiple" : "single",
       question: seed.question, questionUk: seed.questionUk,
       answers: order.map((originalIndex, i) => ({ id: String.fromCharCode(97 + i),
