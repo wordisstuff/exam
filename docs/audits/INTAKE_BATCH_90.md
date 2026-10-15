@@ -1,0 +1,3 @@
+# Batch 90: 1065–1076
+Checked 2026-10-14. Primary official OSHA 1926.52(a)–(e), full Table D-2 and mixed-exposure formula/sample, and 1926.101(a)–(c) read. No previous 1926.52/.101 correct-answer concepts. Uses construction rule, not general-industry 85-dBA action level or NIOSH recommended exchange rate. Distinguishes slow A-weighted levels from peak pressure; preserves advisory 'should' wording for 140-dB peak paragraph. Two original mixed exposures deliberately differ from OSHA's published sample and from each other (factor computation versus combined noncompliance). Five bilingual options, one multi-select. All explicitly excluded from blue-book practice.
+
