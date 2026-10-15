@@ -1,0 +1,4 @@
+# Batch 88: 1041–1052
+Checked 2026-10-14. Primary publisher 2018 Chapter 9 R905.3.1–.8 complete selected text and Table R905.1.1(2) clay/concrete row read. Minnesota 1309.0905 full text reread: only asphalt sheathing and asphalt drip-edge deletion, not selected tile provisions. Do not use 2024 re-numbering. Table R905.3.7 lower fastening allowances expressly not applied to Minnesota snow scenarios; snow two-fastener minimum used. Publisher's inconsistent parenthetical percent conversion next to 2.5:12 not used; ratio arithmetic independently calculated. Nail head SI inconsistency not tested.
+No prior tile R905.3 correct-answer concepts in production (mentions in recent distractors are not duplicate coverage). Original deck, slope, underlayment, material matching, nail/wire, perimeter, snow, valley and cold-climate questions. Five substantive bilingual options; two multi-selects. All 12 blue-book searchable.
+
