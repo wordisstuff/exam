@@ -1,0 +1,4 @@
+# Batch 89: 1053–1064
+Checked 2026-10-14. Primary current Revisor 325G.06 all definitions/exclusions, .07 complete cancellation rule, .08 subdivisions 1–2 and .09 subdivisions 1–6 read. High-stakes source verification also attempted with engine 1; authoritative Revisor full-text is controlling. No prior home-solicitation-sale correct-answer concepts in production; earlier roofing-insurance cancellation questions concern a separate statute and trigger.
+Definition threshold strictly more than $25, Minnesota business day excludes Saturday (unlike some federal definitions), separate buyer emergency statement and substantial-performance conditions, unsolicited upsell limits, mailed effective date and noncompliance cancellation preserved. Avoided confusing statutory .09 ten days with model-notice .08 ten business days. Original scenarios, calendar calculation and notice-format multi-select. All five bilingual options, all bookSearchable false.
+
