@@ -1,0 +1,4 @@
+# Batch 91: 1077–1088
+Checked 2026-10-15 America/Chicago. Primary 2018 IRC Chapter 4 R401.2, R401.4–.4.1, full Table R401.4.1 including footnotes a/b, R403.1.1, .1.5, .1.7–.1.7.4 read from publisher retrieval. Minnesota adoption and 1309.0403 fully read: amendments concern frost/anchorage, not these selected rules. Full amendment index has no R401 change. No flood provisions used; no unread slope-figure dimensional rules used.
+Duplicate review: prior R401.3 drainage, footing depth and anchor rules excluded; no prior selected soil-bearing or adjacent-slope concepts. Distinct original table classification, bearing-area calculation, rock ratio, weak-soil footnote, engineered fill, footing levels and slope-reference/alternate investigations. Five bilingual answers, two multi-selects. All 12 answers searchable in blue code book with exact references.
+
