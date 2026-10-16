@@ -1,0 +1,4 @@
+# Batch 93: 1101–1112
+Checked 2026-10-15. Official licensed 2018 IRC municipal Chapter 7 R703.5.3, R703.6.1–.3, complete Table R703.6.1 including grade notes a–d, and R703.11/.11.1.1 selected full paragraphs read. Minnesota 1309.0703 fully read: changes WRB/flashing/stucco, not selected wood/vinyl rules. Seattle-local penetration-depth wording and altered fiber-cement-joint wording not used.
+Duplicate review: prior fiber-cement lap/width, WRB and stucco excluded. New wood wall furring, expansion versus course offset, grade-sensitive weather exposure, nail versus treated-product materials, rabbet lap, and vinyl certification/fastener specifics. Wall rules distinguished from roofing and interior shingles. Three table styles: row lookup, footnote and paired comparison. Five bilingual choices; one multi-select. All 12 book-searchable.
+
