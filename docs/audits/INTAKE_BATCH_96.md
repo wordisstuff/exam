@@ -1,4 +1,5 @@
 # Batch 96: 1137–1148
 Checked 2026-10-15. Primary current Revisor 326B.83 subdivisions 1–6 read in full, 326B.86 subdivisions 1–2 read in full, current version pages retrieved; engine 1 official-source verification confirms current bond text. Historical versions and proposed 2018 bill not used. Separate and single-limit CGL options distinguished; coverage components, state-licensed insurer, certificate and simultaneous cancellation notice verified. Limits are statutory floors subject to commissioner increase, not insurance advice.
 Duplicate scan found no existing selected license-application or liability-insurance concepts. Existing specialty-contractor $15,000 receipts exemption is not the roofer-bond requirement. Five bilingual answers. Three multi-selects; all statute records bookSearchable false. Application business-history five-year period not incorrectly imposed on separate ever-bankruptcy disclosures.
+Final editorial QA removed a redundant statement from the CGL multi-select: only the two actual coverage components are keyed; workers’ compensation is a separate-policy distractor, not a CGL component.
 

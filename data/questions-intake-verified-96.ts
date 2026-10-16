@@ -249,8 +249,8 @@ const seeds: VerifiedSeed[] = [
         "Продукція й завершені операції"
       ],
       [
-        "Both remain required, not merely coverage while work is in progress",
-        "Обидва потрібні, а не лише покриття під час робіт"
+        "Workers’ compensation for employees as a CGL coverage component",
+        "Компенсація працівникам як компонент покриття CGL"
       ],
       [
         "Only the owner's personal auto policy",
@@ -263,8 +263,7 @@ const seeds: VerifiedSeed[] = [
     ],
     "correct": [
       0,
-      1,
-      2
+      1
     ],
     "explanation": "The law expressly includes premises/operations and products/completed operations in CGL. Tool/property or personal-auto coverage is not a substitute.",
     "explanationUk": "Закон прямо включає premises/operations і products/completed operations до CGL. Покриття інструментів чи особисте автострахування не є заміною.",
