@@ -1,0 +1,4 @@
+# Batch 94: 1113–1124
+Checked 2026-10-15. Licensed official 2018 IRC Chapter 3 R301.4–.8, complete Table R301.6 and R301.7 including notes a–e read. Minnesota 1309.0301 full amendment read: climatic table/snow map changes, not selected deflection/live-load rules. Seattle-specific deck live-load amendment deliberately excluded. Deflection table not confused with separate cold-formed-steel L/480 criteria or MN tall-wall footnotes.
+No prior selected R301.6/.7/.8 direct concepts. Roof questions expressly distinguish live-load component from snow comparison. Cantilever L twice projection, gypsum-board wall footnote and 0.7 ASD wind factor expressly scoped to deflection; all calculations checked in inches. Five bilingual options, no multi-select in this calculation-heavy batch. All 12 true code-book questions.
+
