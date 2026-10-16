@@ -1,0 +1,4 @@
+# Batch 95: 1125–1136
+Checked 2026-10-15. Primary official OSHA 1926.601(a) and all (b)(1)–(14) read. Scope is off-highway jobsite closed to public traffic, excluding equipment specifically governed by .602. Requirements do not purport to replace public-road vehicle regulations. Three brake functions may share components; reverse warning and observer are alternatives, not cumulative; head/taillight visibility condition distinguished from unconditional working brake lights. Positive dump-body supports need permanent attachment and locking, not makeshift blocking. All defects corrected before service.
+No prior .601 or selected vehicle concepts in production. Twelve original scenario/direct/multi-select questions, five bilingual choices; three multi-selects. All OSHA records explicitly bookSearchable false.
+
