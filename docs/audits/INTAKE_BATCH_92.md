@@ -1,0 +1,4 @@
+# Batch 92: 1089–1100
+Checked 2026-10-15. Primary licensed municipal 2018 IRC R608.5.4.1–.5; full Table R608.5.4(1), including four blocks, all No.4/5/6 and Grade40/60 columns, hook cover conditions and SI note, read. No table footnote qualifications beyond printed conditions. Full Minnesota Chapter 1309 index: no R608 amendment.
+Duplicate scan found batch47 already covers ordinary cover values and noncontact-gap rule; those direct rules were rejected. New concepts: secure steel during placement; untested minus-tolerance calculation; distinct lap versus straight/hook tension development; grade-change comparison; reduced hook-cover block; bundled-lintel application and navigation. Hook dimensions themselves not inferred from unread drawing. All 12 five-choice bilingual questions are exact code/table searchable; zero multi-select in this table-heavy batch.
+
