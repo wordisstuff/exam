@@ -7,7 +7,8 @@ import { isCodeBookSearchable } from "../lib/question-source.ts";
 const added = questions.filter(q => q.tags.includes("intake-series-103-108"));
 const count = fs.readdirSync(new URL("../data/", import.meta.url)).filter(n => /^questions-intake-verified-(103|104|105|106|107|108)\.ts$/.test(n)).length;
 test("series 103–108 has consecutive valid Full Exam records", () => {
-  assert.ok(count >= 1 && count <= 6);
+  assert.equal(count, 6);
+  assert.equal(added.length, 72);
   assert.equal(added.length, count * 12);
   assert.deepEqual(added.map(q => q.id), Array.from({length: count * 12}, (_, i) => `intake-verified-${1221+i}`));
   assert.deepEqual(validateQuestionBank(added), []);
