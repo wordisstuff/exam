@@ -365,8 +365,8 @@ const seeds: VerifiedSeed[] = [
   },
   {
     "section": "Minn. Stat. 337.05, subd. 5",
-    "question": "Select TWO actions that do NOT waive a promisor's obligation to provide specified insurance.",
-    "questionUk": "Оберіть ДВІ дії, які НЕ скасовують обов’язок надати зазначене страхування.",
+    "question": "Which TWO circumstances does subdivision 5 EXPRESSLY identify as not waiving a promisor's obligation to provide specified insurance?",
+    "questionUk": "Які ДВІ обставини subd. 5 ПРЯМО визначає як такі, що не скасовують обов’язок надати зазначене страхування?",
     "answers": [
       [
         "The promisee does not insist on an insurance certificate",
