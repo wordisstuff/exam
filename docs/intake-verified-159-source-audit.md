@@ -1,0 +1,5 @@
+# Batch159 — supported masonry veneer
+
+Checked2026-11-02:R703.8.2–.3.2, printed372–376 including support figures/context, publisher https://www.nyecountynv.gov/DocumentCenter/View/38279/2018_Int-Res-Code-2nd_ptg ; MN1309.0703 https://www.revisor.mn.gov/rules/1309.0703/ reviewed, no R703.8 change.40-psf allowance excludes D categories; movement joint and L/600 verified. Support angle6×4×5/16 long leg vertical, doubled studs≤16, clearance1/16, bearing≥2/3, veneer≤12ft8 read. Roof-stop range>7:12 through12:12,3×3×1/4 welded24-inch detail and approval alternative preserved. Veneer cannot carry unrelated vertical loads. Complete special long-opening detail read: span18ft3,18-inch side veneer, specified angle,7-day shoring, joint reinforcement extension/laps12 inches and height table; questions do not authorize it from one condition alone. Calculations120/600=.2 and3.75×2/3=2.5 checked.
+
+1893–1904:12 original EN/UK. Existing veneer tie spacing/weepholes/airspace/general height questions excluded. mn-code-book/searchable true, exact references, schema/keys/uniqueness before commit.
