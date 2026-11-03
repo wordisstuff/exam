@@ -1,0 +1,5 @@
+# Batch160 — roof fire classification and drainage
+
+Checked2026-11-02:R902.1–.3 and R903.2.2–.4.1, printed431–432, publisher https://www.nyecountynv.gov/DocumentCenter/View/38279/2018_Int-Res-Code-2nd_ptg ; MN1309.0903 https://www.revisor.mn.gov/rules/1309.0903/ only changes kick-out provisions, no drainage/cricket exception replacement. ClassA/B/C lot-line trigger<3ft; copper16oz/ft² and slate-underlayment combustible-deck exceptions, integrated-PV tested/listed/labeled and full-cell treatment requirements read. Skylight exception preserves R308.6 and manufacturer flashing. Coping noncombustible/weatherproof at least wall thickness. Drains each low point unless edge drainage; perimeter-entrapment trigger; overflow drain same size/2in flow line; scupper3times/min4in/2in flow line; UL790/ASTM E108 listed-roofing test references verified in R902.1. No question on an uncertain external plumbing-code referral was retained.
+
+1905–1916:12 original EN/UK. Prior kick-out/chimney threshold/shingle rules excluded. mn-code-book, exact searchable references, validation/keys/uniqueness before commit.
