@@ -1,0 +1,5 @@
+# Batch156 — simplified whole-building wall bracing
+
+Checked2026-11-02:R602.12 conditions1–8, R602.12.1–.5 and complete Table R602.12.4 footnotes a–d, printed218–221; publisher https://www.nyecountynv.gov/DocumentCenter/View/38279/2018_Int-Res-Code-2nd_ptg ; MN https://www.revisor.mn.gov/rules/1309.0602/ no replacement. Whole-building method and express references, exclusion of permanent wood foundation, floor24-inch cap, wall10/eave-ridge15-foot eligibility retained. Enclosed garage/sunroom included, open structures excludable. Rectangle≤60 feet and≤3:1 both required. WSP≥3/8/fiberboard≥1/2 with specified fastening/no mix. Exterior units only; continuous3ft versus other-material-between4ft options cannot mix within story. Unit calculation exact9/3. Table explicitly prohibits interpolation and rounds side lengths up, unlike previous header tables. Simplified corner12ft rule distinct from general bracing-line end10ft.
+
+1857–1868:12 original EN/UK records. No prior R602.12 records. mn-code-book/searchable true. Schema, keys and uniqueness checked before commit.
