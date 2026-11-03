@@ -1,0 +1,5 @@
+# Batch161 — earthmoving and industrial trucks
+
+Checked2026-11-02:complete official29 CFR1926.602(a)–(d), https://www.osha.gov/laws-regs/regulations/standardnumber/1926/1926.602 . Read belt exceptions and attachment scenario, road/grade and runaway-ramp duties, horn, scissor guard, all industrial-truck capacity/modification/load-sharing/rider/personnel-platform/spinner provisions. Fenders(a)(5) are suspended by(a)(8)(ii); no active-fender question added. No broad claim from old standards beyond their printed referrals. Personnel-platform question preserves the specific elevatable-control arrangement; not a generic authorization for personnel on any forklift. Individual truck shares checked, not just aggregate capacity. Manufacturer approval must be written and safety factor cannot decrease.
+
+1917–1928:12 independently authored bilingual questions, one three-select. Existing1926.601 vehicle brake/reverse-alarm/dump-body questions screened; unused earthmoving/forklift subrules chosen. osha/bookSearchable false; no code-book reference. Schema, keys, uniqueness checked before commit.
