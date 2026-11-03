@@ -1,0 +1,5 @@
+# Batch146 — wood floor cantilevers
+
+Checked2026-11-02:2018 IRC printed p142, full Tables R502.3.3(1)/(2), all footnotes a–h/a–f; publisher https://www.nyecountynv.gov/DocumentCenter/View/38279/2018_Int-Res-Code-2nd_ptg ; MN adoption/amendment index https://www.revisor.mn.gov/rules/1309/full . No R502 replacement. Wall/roof and balcony scopes, different ratios and uplift formulas kept separate. Tabulated cells checked: balcony2×8/16/50=34(171);2×10/24/70=34(255);2×12/16/50=67(260). Both repetitive-member tables require No.1 Southern pine, unlike listed other species No.2. Full-depth rim and supported-end blocking exception inclusive24 inches in A/B/C read. Interpolation and force arithmetic independently calculated. No seismic D-only generalization.
+
+1737–1748:12 original bilingual questions. Prior steel cantilevers, deck and generic floor-bearing records excluded; these are wood floor cantilever tables. mn-code-book/bookSearchable true; exact references, keys and duplicate screening required before commit.
