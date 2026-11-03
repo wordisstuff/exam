@@ -1,0 +1,5 @@
+# Batch158 — wood shingles
+
+Checked2026-11-02:R905.7.1–.7, full Tables R905.7.4 and R905.7.5(1)/(2), printed439–440; publisher https://www.nyecountynv.gov/DocumentCenter/View/38279/2018_Int-Res-Code-2nd_ptg ; MN1309.0905 https://www.revisor.mn.gov/rules/1309.0905/ modifies asphalt sheathing/deletes asphalt drip-edge subsection only, no wood-shingle changes. Shingles distinguished from shakes: spacing1/4–3/8, any-three-course joint alignment, exposure slope threshold inclusive4:12. Cells18/#2/low=4;24/#1/steep=7.5;16/#3/low=3;24-inch shingle4d box1.5-inch verified. Treatment-specific316 stainless rule retained. Valley widths10/7 each side versus slope12:12, end lap4, approved bundle grading label read. Full fastener/sheathing/treatment scope reviewed; no generalization of untreated fasteners to treated products.
+
+1881–1892:12 original bilingual questions; prior asphalt/slate/shake rules screened and previously unused wood-shingle provisions selected. mn-code-book, exact references/searchable true; validation/keys/uniqueness before commit.
