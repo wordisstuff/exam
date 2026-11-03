@@ -1,0 +1,5 @@
+# Batch 145 — floor span tables
+
+Primary checked 2026-11-02: publisher 2018 IRC pp.137–140, Tables R502.3.1(1)/(2), https://www.nyecountynv.gov/DocumentCenter/View/38279/2018_Int-Res-Code-2nd_ptg . Minnesota adoption/amendment index https://www.revisor.mn.gov/rules/1309/full checked; no R502 table replacement. Read headings, both dead-load blocks, grades, spacings and seismic footnotes; scenarios assume applicable ordinary non-seismic-restricted table scope. Tables not conflated across 30/40-psf live loads. Cell-specific checks: SPF #2 sleep 2×8/16/10 =13-6; 2×10/16 17-2 versus15-5; DFL #2/12/20 2×10=18-0; DFL #2/16/20 2×12=18-1; SPF SS/12 2×10=19-5 both blocks; living SPF #2/16/10 2×8=12-3; Hem-fir #2/16/10 2×10=15-2; Southern pine #2/16/20 2×10=12-10; DFL #2/12/20 2×8=13-6; SPF #1/#2/12/10 2×10=17-3. Arithmetic independently checked.
+
+Original bilingual questions1725–1736. Existing R502 bearing, drilling, table-scope-only and partition records screened; these use previously unused cells and application calculations. mn-code-book; exact table reference; bookSearchable true. Validation and ID/prompt uniqueness required before commit.
