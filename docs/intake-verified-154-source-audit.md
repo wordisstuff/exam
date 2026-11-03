@@ -1,0 +1,5 @@
+# Batch154 — bracing construction and roof load paths
+
+Checked2026-11-02:2018 IRC R602.10.4.2–.4, .10.5–.5.2 and .10.8.2 with exceptions; publisher https://www.nyecountynv.gov/DocumentCenter/View/38279/2018_Int-Res-Code-2nd_ptg ; MN1309.0602 https://www.revisor.mn.gov/rules/1309.0602/ no bracing replacement. Read continuous sheathing above/below openings/gables, opposite gypsum thickness and all exceptions including LIB exclusion and R302.6 caveat, common-stud/1.5-inch horizontal blocking and horizontal-GB exception. Taller adjacent opening controls CS-WSP minimum. Partial credit uses its own table, not full physical length. Roof blocking thresholds preserve A/B/C≤9.25,9.25–15.25 and>15.25-inch categories, aligned-web three8d exception and listed designed load-transfer alternatives. Other roof fastening/lateral support duties not waived.
+
+1833–1844:12 original bilingual records including one two-selection item; prior wall layout and wind-factor questions excluded. mn-code-book/searchable true. Keys/schema/uniqueness checked before commit.
