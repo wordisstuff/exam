@@ -1,0 +1,5 @@
+# Batch155 — minimum/contributing panel lengths and portal limits
+
+Checked2026-11-02:complete Table R602.10.5 with footnotes a–e, Table R602.10.5.2 with footnote a, R602.10.6.4; printed204–206; publisher https://www.nyecountynv.gov/DocumentCenter/View/38279/2018_Int-Res-Code-2nd_ptg ; MN https://www.revisor.mn.gov/rules/1309.0602/ no replacement. WSP12ft=58; single-sided GB=.5actual; LIB11ft NP; CS-WSP wall8/open84=35,wall10/open96=38; partial42actual=36credit;39/8ft interpolation31.5. PFH roof-only16 versus floor+roof24; PFG9ft=27 and1.5actual; CS-PF A/B/C10ft=20 and1.5actual. Portal header10ft limit distinct from pony-wall total12ft. CS-PF≤4 per line. Numerical questions test only table conditions and explicitly retain complete assembly details; no invented portal construction authorization.
+
+1845–1856:12 original EN/UK questions; previous general geometry/partial-credit applicability excluded. mn-code-book, exact references, searchable true; schema, keys and uniqueness checked before commit.
