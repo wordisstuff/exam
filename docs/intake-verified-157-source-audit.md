@@ -1,0 +1,5 @@
+# Batch157 — fireblocking materials and draftstopping
+
+Checked2026-11-02:complete R302.11.1–.2 and R302.12–.12.1, printed62 (material list continues in opposite column), publisher https://www.nyecountynv.gov/DocumentCenter/View/38279/2018_Int-Res-Code-2nd_ptg . MN1309.0302 https://www.revisor.mn.gov/rules/1309.0302/ reviewed to end: no changes to these sections. Material list and penetration exception distinguished;2-inch nominal, two1-inch layers broken laps,23/32 WSP joint backing, secure nonrigid retention,16-inch full-cross-section unfaced fiberglass and intended-use loose-fill testing verified. Draftstop scope includes combustible enclosed floor-ceiling with usable above/below; suspended ceiling/open-web/perforated triggers read.1,000-square-foot maximum, approximately equal areas, supported1/2 gypsum/3/8 WSP and parallel orientation unless approved read.1,800/2=900 independently calculated. No sprinkler exception invented.
+
+1869–1880:12 original EN/UK, one multi-select. Previously used fireblocking placement/10-foot intervals/penetration sealing excluded. mn-code-book, exact references/searchable true; schema/keys/uniqueness before commit.
