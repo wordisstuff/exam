@@ -1,0 +1,5 @@
+# Batch153 — wind bracing tables
+
+Checked2026-11-02:2018 IRC Tables R602.10.3(1)/(2), printed195–198; publisher https://www.nyecountynv.gov/DocumentCenter/View/38279/2018_Int-Res-Code-2nd_ptg ; MN1309.0602 https://www.revisor.mn.gov/rules/1309.0602/ no replacement. Visually rendered/reviewed PDF pages220 and223 to resolve story-location icons and all adjustment rows. Read base heading assumptions, continuation footnotes a–c, and adjustment footnotes a–d. Base WSP≤115/top story/30=5.5, CS≤115/top/40=6.0, WSP≤115/first-of-two/40=13.5; lowest three-story LIB=NP. Worst-case exposure same across all floors; intermediate-line exception excluded where applicable. Factors multiply; roof-only versus floor-support height factors kept distinct; additional800-lb hold-down factor applies only specified top-story methods and connections. Omitted gypsum1.40 and blocking2.0 not conflated. All numerical results recalculated.
+
+1821–1832:12 original bilingual questions. Earlier layout questions do not test these cells/adjustments. mn-code-book/bookSearchable true. Schema, keys and uniqueness checked before commit.
