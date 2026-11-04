@@ -1,5 +1,6 @@
+import type { LearningRuntime } from './learning-runtime.ts';
 import { serverSupabaseConfig } from './platform-env.ts';
-export interface LearningRecord { id: string; user_id: string; revision: number; state: { questionIds: string[]; answers: Record<string, { selected: string[]; seconds: number; section: string; indexTerm: string; usedBook: boolean }>; }; }
+export interface LearningRecord { id: string; user_id: string; revision: number; state: { runtime?: LearningRuntime; questionIds: string[]; answers: Record<string, { selected: string[]; seconds: number; section: string; indexTerm: string; usedBook: boolean }>; }; }
 export async function learningStore(userId: string, row?: LearningRecord, previousRevision?: number): Promise<LearningRecord | null> {
   const { url, serviceRoleKey } = serverSupabaseConfig();
   const target = new URL(`${url}/rest/v1/learning_cycles`);

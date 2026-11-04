@@ -8,7 +8,7 @@ export function projectLearning(row: LearningRecord) {
   const { questionIds, answers } = row.state;
   const submitted = new Set(Object.keys(answers));
   const released = new Set(completedCheckpointIndexes(questionIds, submitted).flatMap(i => questionIds.slice(i * 11, i * 11 + 11)));
-  return { id: row.id, revision: row.revision, ...learningCheckpointState(questionIds, submitted), answers,
+  return { runtime: row.state.runtime ?? null, serverNow: Date.now(), id: row.id, revision: row.revision, ...learningCheckpointState(questionIds, submitted), answers,
     questions: questionIds.map(id => toLearnerQuestion(questions.find(q => q.id === id)!)),
-    review: questionIds.filter(id => released.has(id)).map(id => { const q = questions.find(q => q.id === id)!; return { ...toLearnerQuestion(q), correct: exactMatch(answers[id].selected, q.correctAnswers), correctAnswerIds: q.correctAnswers, explanation: q.explanation, reference: q.reference }; }) };
+    review: questionIds.filter(id => released.has(id)).map(id => { const q = questions.find(q => q.id === id)!; return { ...toLearnerQuestion(q), correct: exactMatch(answers[id].selected, q.correctAnswers), selectedAnswerIds: answers[id].selected, seconds: answers[id].seconds, reportedSection: answers[id].section, indexTerm: answers[id].indexTerm, usedBook: answers[id].usedBook, correctAnswerIds: q.correctAnswers, explanation: q.explanation, reference: q.reference }; }) };
 }
