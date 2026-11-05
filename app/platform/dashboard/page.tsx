@@ -57,6 +57,7 @@ export default function PlatformDashboard() {
   const router = useRouter();
   const [user, setUser] = useState<UserInfo | null>(null);
   const [access, setAccess] = useState<AccessState | null>(null);
+  const [learningV2, setLearningV2] = useState(false);
   const [progress, setProgress] = useState<ProgressSummary | null>(null);
   const [busy, setBusy] = useState<"deferred" | "immediate" | "book-practice" | null>(null);
   const [error, setError] = useState("");
@@ -94,6 +95,7 @@ export default function PlatformDashboard() {
         if (!payload) return;
         setUser(payload.meBody.user);
         setAccess(payload.accessBody.access);
+        setLearningV2(payload.accessBody.learningV2 === true);
         setProgress(payload.progressBody.progress);
       })
       .catch(err => setError(err instanceof Error ? err.message : "Unable to load dashboard."));
@@ -454,14 +456,14 @@ export default function PlatformDashboard() {
 
             <article className="card mode-card flex flex-col">
               <span className="tag self-start">Learn as you go</span>
-              <h3 className="section-title mt-4">Learning Mode</h3>
-              <p className="muted mt-3 flex-1 leading-6">Check each answer immediately and study the explanation and code reference.</p>
+              <h3 className="section-title mt-4">{learningV2 ? "Learning Mode 2.0" : "Learning Mode"}</h3>
+              <p className="muted mt-3 flex-1 leading-6">{learningV2 ? "Study in blocks of 11, review your answers and pick up where you left off." : "Check each answer immediately and study the explanation and code reference."}</p>
               <button
                 disabled={busy !== null || access?.paid === false}
-                onClick={() => void start("immediate")}
+                onClick={() => learningV2 ? router.push("/learning") : void start("immediate")}
                 className="btn primary mt-6 w-full disabled:opacity-50"
               >
-                {busy === "immediate" ? "Creating…" : access?.paid === false ? "Full access required" : "Start Learning Mode"}
+                {busy === "immediate" ? "Creating…" : access?.paid === false ? "Full access required" : learningV2 ? "Open Learning Mode 2.0" : "Start Learning Mode"}
               </button>
             </article>
 

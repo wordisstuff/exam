@@ -1,3 +1,4 @@
+import { learningV2Enabled } from '@/lib/learning-feature';
 import { activeLearningSeconds, initialLearningRuntime, pauseLearning, resumeLearning } from '@/lib/learning-runtime';
 import { NextResponse } from 'next/server';
 import { currentUser } from '@/lib/server-auth';
@@ -9,7 +10,7 @@ import { authorizeLearningSubmission } from '@/lib/learning-state';
 import { validateSelectedAnswers } from '@/lib/server-grading';
 import { projectLearning } from '@/lib/learning-projection';
 async function handle(request: Request) {
-  if (process.env.VERCEL_ENV === 'production' || process.env.LEARNING_V2_ENABLED !== 'true') return NextResponse.json({ error: 'Learning V2 preview is not enabled.' }, { status: 409 });
+  if (!learningV2Enabled()) return NextResponse.json({ error: 'Learning V2 preview is not enabled.' }, { status: 409 });
   const user = await currentUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try { await requirePaidAccess(user.id); } catch { return NextResponse.json({ error: 'Paid access required' }, { status: 402 }); }
