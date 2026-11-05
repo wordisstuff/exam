@@ -1,12 +1,29 @@
 'use client';
 import { learningText, type LearningLanguage } from '@/lib/learning-copy';
-import { useEffect, useState } from 'react';
+import { learningAnalytics } from '@/lib/learning-analytics';
+import './learning.css';
+import { useCallback, useEffect, useState } from 'react';
 import { activeLearningSeconds, type LearningRuntime } from '@/lib/learning-runtime';
 import type { LearnerQuestion } from '@/lib/question-projection';
-import { estimatedReadingSeconds, readingAndPacing } from '@/lib/learning-timing';
-type Progress = { runtime: LearningRuntime | null; serverNow: number; revision: number; checkpoint: number; complete: boolean; pendingIds: string[]; questions: LearnerQuestion[]; review: (LearnerQuestion & { correct: boolean; selectedAnswerIds: string[]; seconds: number; reportedSection: string; indexTerm: string; usedBook: boolean; correctAnswerIds: string[]; explanation: string; reference?: { source: string; section?: string } })[] };
+import { estimatedReadingSeconds, readingAndPacing, paceReserveSeconds } from '@/lib/learning-timing';
+type Progress = { answers: Record<string, { seconds: number }>; runtime: LearningRuntime | null; serverNow: number; revision: number; checkpoint: number; complete: boolean; pendingIds: string[]; questions: LearnerQuestion[]; review: (LearnerQuestion & { correct: boolean; selectedAnswerIds: string[]; seconds: number; reportedSection: string; indexTerm: string; usedBook: boolean; correctAnswerIds: string[]; explanation: string; reference?: { source: string; section?: string } })[] };
 export default function Learning() {
+  const [theme, setTheme] = useState('system');
+  const [intensity, setIntensity] = useState('calm');
   const [language, setLanguage] = useState<LearningLanguage>('en');
+  const [preferencesReady, setPreferencesReady] = useState(false);
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('exam-learning-preferences') ?? '{}');
+      if (['en','uk','es'].includes(saved.language)) setLanguage(saved.language);
+      if (['system','light','dark'].includes(saved.theme)) setTheme(saved.theme);
+      if (['calm','exam'].includes(saved.intensity)) setIntensity(saved.intensity);
+    } catch { /* Preferences are optional in restricted browsers. */ }
+    setPreferencesReady(true);
+  }, []);
+  useEffect(() => {
+    if (preferencesReady) try { localStorage.setItem('exam-learning-preferences', JSON.stringify({ language, theme, intensity })); } catch { /* Keep in-memory preferences. */ }
+  }, [preferencesReady, language, theme, intensity]);
   const t = (text: string) => learningText(text, language);
   const [data, setData] = useState<Progress | null>(null);
   const [error, setError] = useState('');
@@ -18,7 +35,7 @@ export default function Learning() {
   const [usedBook, setUsedBook] = useState(false);
   const [clockOffset, setClockOffset] = useState(0);
   const [reviewing, setReviewing] = useState(false);
-  async function load(body?: object) {
+  const load = useCallback(async (body?: object) => {
     setBusy(true); setError('');
     try {
       const response = await fetch('/api/learning', body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : { cache: 'no-store' });
@@ -33,8 +50,8 @@ export default function Learning() {
       }
       return result as Progress;
     } catch (e) { setError(e instanceof Error ? e.message : 'Unable to save progress'); } finally { setBusy(false); }
-  }
-  useEffect(() => { void load(); }, []);
+  }, []);
+  useEffect(() => { void load(); }, [load]);
   const question = data?.questions.find(q => q.id === data.pendingIds[0]);
 
   useEffect(() => {
@@ -43,18 +60,36 @@ export default function Learning() {
     const timer = setInterval(() => setSeconds(Math.floor(activeLearningSeconds(runtime, Date.now() + clockOffset))), 500);
     return () => clearInterval(timer);
   }, [data, reviewing, clockOffset]);
+  const draft = { selected, section, indexTerm, usedBook };
+  const dirty = Boolean(question && JSON.stringify(draft) !== JSON.stringify(data?.runtime?.draft));
+  useEffect(() => {
+    if (!data || busy || reviewing || error || !dirty) return;
+    const timer = setTimeout(() => { void load({ action: 'draft', revision: data.revision, selected, section, indexTerm, usedBook }); }, 700);
+    return () => clearTimeout(timer);
+  }, [data, busy, reviewing, error, dirty, selected, section, indexTerm, usedBook, load]);
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
+  const answered = Object.values(data?.answers ?? {});
+  const reserve = paceReserveSeconds(answered.length, answered.reduce((total, answer) => total + answer.seconds, 0) + seconds);
+  const analytics = learningAnalytics(data?.review ?? []);
   const pace = readingAndPacing(seconds, question ? estimatedReadingSeconds(question.question, question.answers.map(a => a.text)) : 5);
-  return <main className="mx-auto min-h-screen max-w-3xl space-y-6 bg-[#efede7] p-5 text-[#303735] sm:p-10">
-    <label className="block">Language / Мова / Idioma <select className="min-h-12 rounded border bg-white p-2" value={language} onChange={e => setLanguage(e.target.value as LearningLanguage)}><option value="en">English</option><option value="uk">Українська</option><option value="es">Español</option></select></label><a href="/platform/dashboard">← Dashboard</a><h1 className="text-3xl font-semibold">{t("Learning Mode 2.0")}</h1>
+  return <main data-theme={theme} className="learning-shell mx-auto min-h-screen max-w-3xl space-y-6 bg-[#efede7] p-5 text-[#303735] sm:p-10">
+    <div className="flex flex-wrap gap-3"><label>{t('Theme')} <select value={theme} onChange={e => setTheme(e.target.value)}><option value="system">{t('System')}</option><option value="light">{t('Light')}</option><option value="dark">{t('Dark')}</option></select></label><label>{t('Timer')} <select value={intensity} onChange={e => setIntensity(e.target.value)}><option value="calm">{t('Calm')}</option><option value="exam">{t('Exam')}</option></select></label></div>
+    <label className="block">Language / Мова / Idioma <select className="min-h-12 rounded border bg-white p-2" value={language} onChange={e => setLanguage(e.target.value as LearningLanguage)}><option value="en">English</option><option value="uk">Українська</option><option value="es">Español</option></select></label><a href="/platform/dashboard">← {t('Dashboard')}</a><h1 className="text-3xl font-semibold">{t("Learning Mode 2.0")}</h1>
+    <p role="status" aria-live="polite">{t(busy ? 'Saving…' : error ? 'Not saved' : dirty ? 'Unsaved changes' : 'Saved')}</p>
     {error && <p role="alert">{error}</p>}
     {!data && <><p>{t("110 questions · 10 checkpoints. Review opens after each 11 submissions. Three minutes is a pacing guide; you can take longer. Section and Index entries are optional.")}</p><button disabled={busy} onClick={() => void load({ action: 'start' })} className="min-h-14 w-full rounded-xl bg-[#526d60] p-4 text-white">{t("Start")}</button></>}
-    {data && <p>Checkpoint {data.checkpoint + 1} / 10 · {data.review.length} reviewed questions</p>}
-    {data && (reviewing || data.complete) ? <><h2 className="text-2xl">{t("Checkpoint review")}</h2>{data.review.map(q => <details key={q.id} className="rounded-xl bg-white p-5"><summary>{t(q.correct ? 'Correct' : 'Incorrect / unanswered')} · {q.question}</summary><p>{q.answers.filter(a => q.correctAnswerIds.includes(a.id)).map(a => a.text).join(', ')}</p><p>Your answer: {q.answers.filter(a => q.selectedAnswerIds.includes(a.id)).map(a => a.text).join(", ") || "Unanswered"}</p><p>{q.seconds}s · {q.reportedSection ? "Section entered: " + q.reportedSection : "No section entered"} · {q.indexTerm}</p><p>{q.explanation}</p><p>{q.reference?.source} {q.reference?.section}</p></details>)}{!data.complete && <button className="min-h-12 p-4" onClick={async () => { const result = await load({ action: 'resume', revision: data.revision }); if (result) setReviewing(false); }}>{t("Continue Learning")}</button>}</> : question && <>
-      <div role="timer" aria-label="Question pacing" className="mx-auto flex h-28 w-28 items-center justify-center rounded-full border-4 border-[#789081] text-2xl tabular-nums">{pace.overtimeSeconds ? '+' + pace.overtimeSeconds : pace.remainingSeconds}s</div><p>{t(pace.phase === 'reading' ? 'Reading' : 'Search pacing')} · {t('no time limit')}</p>
-      <div className="flex flex-wrap gap-3"><button disabled={busy} className="min-h-12 rounded border p-3" onClick={() => void load({ action: 'draft', revision: data?.revision, selected, section, indexTerm, usedBook })}>{t("Save draft")}</button><button disabled={busy} className="min-h-12 rounded border p-3" onClick={() => void load({ action: data?.runtime?.paused ? 'resume' : 'pause', revision: data?.revision, selected, section, indexTerm, usedBook })}>{t(data?.runtime?.paused ? 'Resume' : 'Pause')}</button><button className="min-h-12 rounded border p-3" onClick={async () => { const result = await load({ action: 'pause', revision: data?.revision, selected, section, indexTerm, usedBook }); if (result) setReviewing(true); }}>{t("History")}</button></div>
+    {data && <p>{t('Checkpoint')} {data.checkpoint + 1} / 10 · {data.review.length} {t('reviewed questions')} · {t('Pace reserve')}: {reserve > 0 ? '+' : ''}{reserve}s</p>}
+    {data && (reviewing || data.complete) ? <><h2 className="text-2xl">{t("Checkpoint review")}</h2><p>{t('Correct')}: {analytics.correct}/{analytics.total} · {t('Unanswered')}: {analytics.unanswered} · {t('Active seconds')}: {Math.floor(analytics.seconds)}</p><p>{t('Book use (self-reported)')}: {analytics.usedBook} · {t('Section entered')}: {analytics.sectionsEntered}</p><h3>{t('Topics to practice')}</h3><ul>{analytics.topics.map(topic => <li key={topic.topic}>{topic.topic}: {topic.correct}/{topic.total} · {Math.round(topic.averageSeconds)}s</li>)}</ul>{data.review.map(q => <details key={q.id} className="rounded-xl bg-white p-5"><summary>{t(q.correct ? 'Correct' : 'Incorrect / unanswered')} · {q.question}</summary><p>{q.answers.filter(a => q.correctAnswerIds.includes(a.id)).map(a => a.text).join(', ')}</p><p>{t('Your answer')}: {q.answers.filter(a => q.selectedAnswerIds.includes(a.id)).map(a => a.text).join(", ") || t('Unanswered')}</p><p>{q.seconds}s · {q.reportedSection ? t('Section entered') + ': ' + q.reportedSection : t('No section entered')} · {q.indexTerm}</p><p>{q.explanation}</p><p>{q.reference?.source} {q.reference?.section}</p></details>)}{!data.complete && <button disabled={busy} className="min-h-12 p-4" onClick={async () => { const result = await load({ action: 'resume', revision: data.revision }); if (result) setReviewing(false); }}>{t("Continue Learning")}</button>}</> : question && <>
+      <div data-pace={intensity === 'calm' ? 'calm' : seconds >= 180 ? 'overtime' : seconds >= 150 ? 'late' : seconds >= 120 ? 'steady' : 'calm'} role="timer" aria-label="Question pacing" className="mx-auto flex h-28 w-28 items-center justify-center rounded-full border-4 border-[#789081] text-2xl tabular-nums">{pace.overtimeSeconds ? '+' + pace.overtimeSeconds : pace.remainingSeconds}s</div><p>{t(pace.phase === 'reading' ? 'Reading' : 'Search pacing')} · {t('no time limit')}</p>
+      <div className="flex flex-wrap gap-3"><button disabled={busy} className="min-h-12 rounded border p-3" onClick={() => void load({ action: 'draft', revision: data?.revision, selected, section, indexTerm, usedBook })}>{t("Save draft")}</button><button disabled={busy} className="min-h-12 rounded border p-3" onClick={() => void load({ action: data?.runtime?.paused ? 'resume' : 'pause', revision: data?.revision, selected, section, indexTerm, usedBook })}>{t(data?.runtime?.paused ? 'Resume' : 'Pause')}</button><button disabled={busy} className="min-h-12 rounded border p-3" onClick={async () => { const result = await load({ action: 'pause', revision: data?.revision, selected, section, indexTerm, usedBook }); if (result) setReviewing(true); }}>{t("History")}</button></div>
       {data?.runtime?.paused && <p role="status">{t("Paused · timer stopped")}</p>}
-      <h2 className="text-xl leading-relaxed">{question.question}</h2>{language === 'uk' && <p>{question.questionUk}</p>}<fieldset className="space-y-3"><legend className="mb-3">Choose {question.requiredSelections ?? 1} answer(s)</legend>{question.answers.map(a => <label key={a.id} className="flex min-h-14 items-center gap-3 rounded-xl border border-[#bac3ba] bg-white p-4"><input type={question.type === 'single' ? 'radio' : 'checkbox'} name="answer" checked={selected.includes(a.id)} onChange={() => setSelected(question.type === 'single' ? [a.id] : selected.includes(a.id) ? selected.filter(id => id !== a.id) : [...selected, a.id])} />{a.text}</label>)}</fieldset>
-      <label className="block">{t("Section (optional)")}<input className="block min-h-12 w-full rounded border bg-white p-3" value={section} onChange={e => setSection(e.target.value)} /></label><label className="block">{t("Index term (optional)")}<input className="block min-h-12 w-full rounded border bg-white p-3" value={indexTerm} onChange={e => setIndexTerm(e.target.value)} /></label><label className="flex min-h-12 gap-3"><input type="checkbox" checked={usedBook} onChange={e => setUsedBook(e.target.checked)} />{t("I used my Code Book (self-reported)")}</label>
+      <h2 className="text-xl leading-relaxed">{question.question}</h2>{language === 'uk' && <p>{question.questionUk}</p>}<fieldset disabled={busy} className="space-y-3"><legend className="mb-3">{t('Choose')} {question.requiredSelections ?? 1} {t('answer(s)')}</legend>{question.answers.map(a => <label key={a.id} className="flex min-h-14 items-center gap-3 rounded-xl border border-[#bac3ba] bg-white p-4"><input type={question.type === 'single' ? 'radio' : 'checkbox'} name="answer" checked={selected.includes(a.id)} onChange={() => setSelected(question.type === 'single' ? [a.id] : selected.includes(a.id) ? selected.filter(id => id !== a.id) : [...selected, a.id])} />{a.text}</label>)}</fieldset>
+      <label className="block">{t("Section (optional)")}<input disabled={busy} className="block min-h-12 w-full rounded border bg-white p-3" value={section} onChange={e => setSection(e.target.value)} /></label><label className="block">{t("Index term (optional)")}<input className="block min-h-12 w-full rounded border bg-white p-3" value={indexTerm} onChange={e => setIndexTerm(e.target.value)} /></label><label className="flex min-h-12 gap-3"><input disabled={busy} type="checkbox" checked={usedBook} onChange={e => setUsedBook(e.target.checked)} />{t("I used my Code Book (self-reported)")}</label>
       <button disabled={busy || data?.runtime?.paused} className="min-h-14 w-full rounded-xl bg-[#526d60] p-4 text-white" onClick={async () => { if (!data) return; const result = await load({ action: 'answer', revision: data.revision, questionId: question.id, selected, seconds, section, indexTerm, usedBook }); if (result && result.review.length > data.review.length) setReviewing(true); }}>{t("Save answer")}</button>
     </>}
   </main>;
