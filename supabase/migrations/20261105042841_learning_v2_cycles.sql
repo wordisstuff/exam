@@ -1,3 +1,4 @@
+-- Additive migration: only creates and secures learning_cycles. Existing objects are untouched.
 create table public.learning_cycles (
  id uuid primary key,
  user_id uuid not null unique references auth.users(id) on delete cascade,
@@ -6,5 +7,5 @@ create table public.learning_cycles (
  created_at timestamptz not null default now()
 );
 alter table public.learning_cycles enable row level security;
-revoke all on public.learning_cycles from public, anon, authenticated;
+revoke all on public.learning_cycles from public, anon, authenticated, service_role;
 grant select, insert, update on public.learning_cycles to service_role;

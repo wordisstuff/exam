@@ -9,7 +9,7 @@ import { authorizeLearningSubmission } from '@/lib/learning-state';
 import { validateSelectedAnswers } from '@/lib/server-grading';
 import { projectLearning } from '@/lib/learning-projection';
 async function handle(request: Request) {
-  if (process.env.LEARNING_V2_ENABLED !== 'true') return NextResponse.json({ error: 'Learning V2 preview is not enabled.' }, { status: 409 });
+  if (process.env.VERCEL_ENV === 'production' || process.env.LEARNING_V2_ENABLED !== 'true') return NextResponse.json({ error: 'Learning V2 preview is not enabled.' }, { status: 409 });
   const user = await currentUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try { await requirePaidAccess(user.id); } catch { return NextResponse.json({ error: 'Paid access required' }, { status: 402 }); }
@@ -21,7 +21,7 @@ async function handle(request: Request) {
         if (body.action !== 'start') return NextResponse.json({ error: 'Start a cycle first' }, { status: 409 });
         const draft = buildLearningCycleDraft(questions);
         row = await learningStore(user.id, { id: draft.id, user_id: user.id, revision: 0, state: { questionIds: draft.questionIds, answers: {}, runtime: initialLearningRuntime(draft.questionIds[0], Date.now()) } });
-       } else if (['pause', 'resume', 'draft'].includes(body.action)) {
+      } else if (['pause', 'resume', 'draft'].includes(body.action)) {
         if (body.revision !== row.revision) return NextResponse.json({ error: 'Progress changed. Reload and retry.' }, { status: 409 });
         let runtime = row.state.runtime ?? initialLearningRuntime(row.state.questionIds.find(id => !row!.state.answers[id]) ?? null, Date.now());
         if (body.action === 'pause') runtime = pauseLearning(runtime, Date.now());
@@ -39,6 +39,7 @@ async function handle(request: Request) {
         const selected = validateSelectedAnswers(q, body.selected);
         const action = authorizeLearningSubmission(row.state.questionIds, new Set(Object.keys(row.state.answers)), q.id);
         if (action === 'submit') {
+          if (row.state.runtime?.questionId && row.state.runtime.questionId !== q.id) return NextResponse.json({ error: 'Submit the current question first.' }, { status: 409 });
           if (row.state.runtime?.paused) return NextResponse.json({ error: 'Resume before submitting.' }, { status: 409 });
           if (body.revision !== row.revision) return NextResponse.json({ error: 'Progress changed. Reload and retry.' }, { status: 409 });
           const next = { ...row, revision: row.revision + 1, state: { ...row.state, answers: { ...row.state.answers, [q.id]: { selected, seconds: row.state.runtime ? Math.floor(activeLearningSeconds(row.state.runtime, Date.now())) : 0, section: String(body.section ?? '').slice(0, 80), indexTerm: String(body.indexTerm ?? '').slice(0, 120), usedBook: body.usedBook === true } } } };

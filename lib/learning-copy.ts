@@ -1,5 +1,15 @@
 export type LearningLanguage = 'en' | 'uk' | 'es';
 const copy: Record<string, [string, string]> = {
+"Incorrect": ["Неправильно","Incorrecto"],
+"Close review": ["Закрити перегляд","Cerrar revisión"],
+"Correct answer": ["Правильна відповідь","Respuesta correcta"],
+"Sign in": ["Увійти","Iniciar sesión"],
+"Unauthorized": ["Увійдіть, щоб продовжити навчання.","Inicia sesión para continuar."],
+"Paid access required": ["Потрібен оплачений доступ.","Se requiere acceso de pago."],
+"Reload saved progress": ["Завантажити збережений прогрес","Cargar progreso guardado"],
+"Progress changed. Reload and retry.": ["Прогрес змінився. Завантажте його ще раз.","El progreso cambió. Vuelve a cargarlo."],
+"Concurrent update. Reload and retry.": ["Прогрес оновлено в іншому вікні. Завантажте його ще раз.","El progreso se actualizó en otra ventana. Vuelve a cargarlo."],
+"Learning V2 preview is not enabled.": ["Перегляд Learning V2 вимкнено.","La vista previa de Learning V2 está desactivada."],
 "Pace reserve": ["Резерв темпу", "Reserva de ritmo"],
 "Theme": ["Оформлення","Tema"],
 "System": ["Системне","Sistema"],

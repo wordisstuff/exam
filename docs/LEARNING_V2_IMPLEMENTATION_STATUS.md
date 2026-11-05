@@ -19,3 +19,21 @@ Added persisted runtime timestamps, pause/resume actions, explicit draft save an
 Added debounced draft autosave (700 ms), pending-save indication and unload warning. Controls are locked during requests to avoid overwriting edits with an older server response. Save failures remain visible and can be retried manually. Added scoped Light/Dark/System and Calm/Exam controls with persisted preferences, translated main study/history/settings labels and released-history weak-topic analysis. Book-use self-report and section-entered counts remain separate. Added analytics test. Real browser autosave/concurrency and database behavior still require verification.
 
 Confirmed by owner: project is mn-qb-exam (erwgnlrasmrfxwbtcuua). Direct get_project and list_tables attempts both returned permission denied. No SQL executed. Reconnect the Supabase plugin with an account belonging to the organization that owns mn-qb-exam, authorizing this project. Vercel Preview still has no Supabase variables; do not reuse WeDo or silently copy Production credentials. Read the existing schema before applying any migration.
+
+## Database rollout and Preview
+The owner authorized the additive migration on mn-qb-exam (erwgnlrasmrfxwbtcuua). The original nine public tables and RLS were confirmed before applying anything. The first eight SQL files are reflected in the live schema even though their historical versions were absent from the migration ledger:
+
+| Repository migration | Verified on Exam |
+| --- | --- |
+| Commercial foundation | Nine core tables, owner RLS policies, update triggers and protected question tables |
+| Entitlement checkout uniques | Payment-intent index present; checkout index superseded below |
+| Book Practice terminology | Renamed columns and response-path constraints present |
+| Demo claim mode | `demo` allowed in the session mode constraint |
+| Entitlement checkout unique | Non-partial unique checkout-session index present |
+| Demo claim idempotency | `demo_claim_key` and unique index present |
+| Service-role privileges | Server role grants present on existing application tables |
+| TypeScript bank session answers | Question FK absent and question ID index present |
+
+Only Learning V2 was applied, using the migration ledger version `20261105042841`. It creates `learning_cycles` with RLS and unique indexes for `id` and `user_id`. The client roles have no direct table privileges; `service_role` has SELECT/INSERT/UPDATE only. Transactional role probes denied direct reads for anonymous and two authenticated identities. No historical migration was replayed. No existing application data or policies were changed.
+
+Vercel reuses the existing Exam Supabase settings for Preview without changing their values. The Learning V2 flag and entitlement enforcement are limited to Preview on `feature/learning-mode-v2`. The Learning API also rejects Production. No Production deployment was triggered. The mobile checkpoint detail uses a full-screen dialog; history groups released results by checkpoint, with localized labels and recovery for stale progress.
