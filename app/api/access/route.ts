@@ -1,3 +1,4 @@
+import { hasLearningPreviewPass, learningV2Enabled } from "@/lib/learning-feature";
 import { NextResponse } from "next/server";
 import { platformDataMode } from "@/lib/platform-env";
 import { currentUser } from "@/lib/server-auth";
@@ -12,7 +13,7 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    return NextResponse.json({ access: await getAccessState(user.id) });
+    return NextResponse.json({ access: await getAccessState(user.id), learningV2: learningV2Enabled(), learningPreviewPass: hasLearningPreviewPass(user.id) });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unable to load access." },

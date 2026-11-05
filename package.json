@@ -4,6 +4,7 @@
     "dev": "next dev",
     "build": "next build",
     "lint": "eslint .",
+    "test:learning-http": "node scripts/test-learning-http.mjs",
     "test": "node --test --experimental-strip-types tests/*.test.ts"
   },
   "dependencies": {
