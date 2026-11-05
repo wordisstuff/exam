@@ -1,4 +1,4 @@
-import { learningV2Enabled } from '@/lib/learning-feature';
+import { hasLearningPreviewPass, learningV2Enabled } from '@/lib/learning-feature';
 import { activeLearningSeconds, initialLearningRuntime, pauseLearning, resumeLearning } from '@/lib/learning-runtime';
 import { NextResponse } from 'next/server';
 import { currentUser } from '@/lib/server-auth';
@@ -13,7 +13,7 @@ async function handle(request: Request) {
   if (!learningV2Enabled()) return NextResponse.json({ error: 'Learning V2 preview is not enabled.' }, { status: 409 });
   const user = await currentUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  try { await requirePaidAccess(user.id); } catch { return NextResponse.json({ error: 'Paid access required' }, { status: 402 }); }
+  try { if (!hasLearningPreviewPass(user.id)) await requirePaidAccess(user.id); } catch { return NextResponse.json({ error: 'Paid access required' }, { status: 402 }); }
   try {
     let row = await learningStore(user.id);
     if (request.method === 'POST') {
